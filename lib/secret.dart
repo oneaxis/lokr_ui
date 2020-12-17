@@ -10,4 +10,9 @@ class Secret {
   Secret({this.password, this.title, this.url, this.username});
   factory Secret.fromJson(Map<String, dynamic> json) => _$SecretFromJson(json);
   Map<String, dynamic> toJson() => _$SecretToJson(this);
+
+  @override
+  String toString() {
+    return 'Secret{password: $password, title: $title, username: $username, url: $url}';
+  }
 }

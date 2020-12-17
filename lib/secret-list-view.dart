@@ -1,17 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lokr_ui/messaging-service.dart';
+import 'package:lokr_ui/secret-creation-view.dart';
 import 'package:lokr_ui/secret.dart';
 import 'package:lokr_ui/secrets-service.dart';
 
-class SecretsListView extends StatefulWidget {
+class SecretListView extends StatefulWidget {
   final String title = 'Stored secrets';
 
   @override
-  _SecretsListViewState createState() => _SecretsListViewState();
+  _SecretListViewState createState() => _SecretListViewState();
 }
 
-class _SecretsListViewState extends State<SecretsListView> {
+class _SecretListViewState extends State<SecretListView> {
   final List<Secret> _secrets = [];
 
   @override
@@ -32,6 +33,9 @@ class _SecretsListViewState extends State<SecretsListView> {
     this.setState(() {
       _secrets.clear();
       _secrets.addAll(secrets);
+      _secrets.addAll(secrets);
+      _secrets.addAll(secrets);
+      _secrets.addAll(secrets);
     });
   }
 
@@ -43,27 +47,27 @@ class _SecretsListViewState extends State<SecretsListView> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Container(
-        padding: EdgeInsets.all(8),
-        child: Column(
-          children: [
-            Text(
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Text(
                 'Here you find all your stored secrets. Just click on one of the '
                 'fields (e.g. password) to copy the content or extend the secret details.',
                 style: Theme.of(context).textTheme.bodyText1),
-            Divider(thickness: 1),
-            Expanded(
-              flex: 8,
-              child: _ListView(_secrets),
-            )
-          ],
-        ),
+          ),
+          Padding(
+              padding: EdgeInsets.only(left: 8, right: 8),
+              child: Divider(thickness: 1)),
+          Expanded(
+            child: _ListView(_secrets),
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          this._addSecret(new Secret(
-              password: 'somepassword',
-              title: 'A new demo secret with long title...'));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SecretCreationView()));
         },
         tooltip: 'Create new secret',
         child: Icon(Icons.add),
@@ -151,10 +155,13 @@ class _ListItemTextView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: Theme.of(context).textTheme.bodyText1,
-      overflow: TextOverflow.ellipsis,
+    return Padding(
+      padding: EdgeInsets.only(left: 8),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.bodyText1,
+        overflow: TextOverflow.ellipsis,
+      ),
     );
   }
 }
