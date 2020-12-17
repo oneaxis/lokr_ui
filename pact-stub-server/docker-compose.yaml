@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  pact-stub-server:
+    image: pactfoundation/pact-stub-server
+    volumes:
+    - ./pacts/:/app/pacts/
+    command: "-p 1234 -d pacts"
+    ports:
+      - 1234:1234

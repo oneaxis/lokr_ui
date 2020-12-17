@@ -1,0 +1,181 @@
+{
+  "consumer": {
+    "name": "LOKRUI"
+  },
+  "provider": {
+    "name": "LOKRAPI"
+  },
+  "interactions": [
+    {
+      "description": "a request to create a secret",
+      "providerState": "provider accepts a new secret",
+      "request": {
+        "method": "POST",
+        "path": "/api/secrets/",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "content": {
+            "password": "mysecretpassword",
+            "title": "Oneaxis Mail",
+            "username": "oneaxis@oneaxis.de",
+            "url": "https://oneaxis.de"
+          }
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "id": "ID",
+          "content": {
+            "title": "Oneaxis Mail",
+            "username": "oneaxis@oneaxis.de",
+            "url": "https://oneaxis.de"
+          }
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "a request to get all stored secrets",
+      "providerState": "provider has stored secrets",
+      "request": {
+        "method": "GET",
+        "path": "/api/secrets/",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": [
+          {
+            "id": "ID1",
+            "content": {
+              "title": "Oneaxis Mail",
+              "username": "oneaxis@oneaxis.de",
+              "url": "https://oneaxis.de"
+            }
+          },
+          {
+            "id": "ID2",
+            "content": {
+              "title": "Oneaxis Mail",
+              "username": "oneaxis@oneaxis.de",
+              "url": "https://oneaxis.de"
+            }
+          },
+          {
+            "id": "ID3",
+            "content": {
+              "title": "Oneaxis Mail",
+              "username": "oneaxis@oneaxis.de",
+              "url": "https://oneaxis.de"
+            }
+          }
+        ],
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "a request to get a single stored secret",
+      "providerState": "provider has stored secrets",
+      "request": {
+        "method": "GET",
+        "path": "/api/secrets/ID1",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "id": "ID1",
+          "content": {
+            "title": "Oneaxis Mail",
+            "username": "oneaxis@oneaxis.de",
+            "url": "https://oneaxis.de",
+            "password": "mysecretpassword"
+          }
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "a request to update the secret",
+      "providerState": "provider has an existing secret",
+      "request": {
+        "method": "PUT",
+        "path": "/api/secrets/ID1",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "id": "ID1",
+          "content": {
+            "password": "mysecretpassword",
+            "title": "Oneaxis Mail",
+            "username": "oneaxis@oneaxis.de",
+            "url": "https://oneaxis.de"
+          }
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "id": "ID1",
+          "content": {
+            "title": "Oneaxis Mail Updated",
+            "username": "oneaxis@oneaxis.de",
+            "url": "https://oneaxis.de"
+          }
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  }
+}
