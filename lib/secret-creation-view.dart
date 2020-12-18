@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lokr_ui/secret.dart';
+import 'package:lokr_ui/validator.dart';
 
 import 'messaging-service.dart';
 
@@ -20,24 +21,24 @@ class _SecretCreationViewState extends State<SecretCreationView> {
         return false;
       },
       child: Scaffold(
-          appBar: AppBar(
-            title: Text("New secret"),
-          ),
-          body: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
+        appBar: AppBar(
+          title: Text("New secret"),
+        ),
+        body: Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              children: [
+                Text(
                     'Here you find all your stored secrets. Just click on one of the '
                     'fields (e.g. password) to copy the content or extend the secret details.',
                     style: Theme.of(context).textTheme.bodyText1),
-              ),
-              Padding(
-                  padding: EdgeInsets.only(left: 8, right: 8),
-                  child: Divider(thickness: 1)),
-              _SecretCreationForm(),
-            ],
-          )),
+                Padding(
+                    padding: EdgeInsets.only(top: 8, bottom: 8),
+                    child: Divider(thickness: 1)),
+                _SecretCreationForm(),
+              ],
+            )),
+      ),
     );
   }
 }
@@ -49,7 +50,7 @@ class _SecretCreationForm extends StatefulWidget {
 
 class __SecretCreationFormState extends State<_SecretCreationForm> {
   final _formKey = GlobalKey<FormState>();
-  var _passwordController = TextEditingController(),
+  final TextEditingController _passwordController = TextEditingController(),
       _titleController = TextEditingController(),
       _usernameController = TextEditingController(),
       _urlController = TextEditingController();
@@ -60,103 +61,149 @@ class __SecretCreationFormState extends State<_SecretCreationForm> {
         key: _formKey,
         child: Column(
           children: [
-            Padding(
-                padding: EdgeInsets.all(8),
-                child: TextFormField(
-                  obscureText: true,
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Your secret password...',
-                    prefixIcon: Icon(Icons.vpn_key),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.emoji_symbols),
-                      onPressed: () {},
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'A password is required!';
-                    }
-                    return null;
-                  },
-                )),
-            Padding(
-                padding: EdgeInsets.all(8),
-                child: TextFormField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: 'Enter the secrets title/purpose...',
-                    prefixIcon: Icon(Icons.person),
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'A title is required!';
-                    }
-                    return null;
-                  },
-                )),
-            Padding(
-                padding: EdgeInsets.all(8),
-                child: TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Optional: Provide an username...',
-                    prefixIcon: Icon(Icons.link),
-                  ),
-                  validator: (value) {
-                    return null;
-                  },
-                )),
-            Padding(
-                padding: EdgeInsets.all(8),
-                child: TextFormField(
-                  controller: _urlController,
-                  decoration: InputDecoration(
-                    labelText: 'Optional: Provide an URL...',
-                    prefixIcon: Icon(Icons.edit),
-                  ),
-                  validator: (value) {
-                    return null;
-                  },
-                )),
+            _PasswordFormField(),
+            _TextFormField('Enter the secrets title/purpose...',
+                prefix: Icon(Icons.edit), validators: [Validator.required]),
+            _TextFormField('Optional: Provide an username...',
+                prefix: Icon(Icons.person)),
+            _TextFormField('Optional: Provide an URL...',
+                prefix: Icon(Icons.link)),
             Row(
               children: [
                 Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.all(8),
-                  child: FlatButton(
-                    onPressed: () {
-                      // Validate returns true if the form is valid, or false
-                      // otherwise.
-                      _showOnPopDialog(context);
-                    },
-                    child: Text("Cancel creation"),
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 8, top: 8),
+                    child: FlatButton(
+                      onPressed: () {
+                        // Validate returns true if the form is valid, or false
+                        // otherwise.
+                        _showOnPopDialog(context);
+                      },
+                      child: Text("Cancel creation"),
+                    ),
                   ),
-                )),
+                ),
                 Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.all(8),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Validate returns true if the form is valid, or false
-                      // otherwise.
-                      if (_formKey.currentState.validate()) {
-                        Secret secret = Secret(
-                          password: _passwordController.text,
-                          title: _titleController.text,
-                          username: _usernameController.text,
-                          url: _urlController.text,
-                        );
-                        MessagingService.showSnackBarMessage(context, 'Processing Data for $secret');
-                      }
-                    },
-                    child: Text('Store secret'),
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 8, top: 8),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Validate returns true if the form is valid, or false
+                        // otherwise.
+                        if (_formKey.currentState.validate()) {
+                          Secret secret = Secret(
+                            password: _passwordController.text,
+                            title: _titleController.text,
+                            username: _usernameController.text,
+                            url: _urlController.text,
+                          );
+                          MessagingService.showSnackBarMessage(
+                              context, 'Processing Data for $secret');
+                        }
+                      },
+                      child: Text('Store secret'),
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ],
         ));
+  }
+}
+
+class _TextFormField extends StatelessWidget {
+  final TextEditingController _controller = TextEditingController();
+  final String label;
+  Icon suffix, prefix;
+  List<Function> validators;
+
+  _TextFormField(this.label, {this.suffix, this.prefix, this.validators});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 8,
+          child: TextFormField(
+            controller: _controller,
+            decoration: InputDecoration(
+              labelText: label,
+              prefixIcon: prefix ?? prefix,
+              suffixIcon: suffix ?? suffix,
+            ),
+            validator: (value) {
+              for (final validator in validators) {
+                return validator(value);
+              }
+              return null;
+            },
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class _PasswordFormField extends StatefulWidget {
+  @override
+  _PasswordFormFieldState createState() => _PasswordFormFieldState();
+}
+
+class _PasswordFormFieldState extends State<_PasswordFormField> {
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
+
+  void togglePasswordVisibility() {
+    this.setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 8,
+          child: TextFormField(
+            obscureText: !_isPasswordVisible,
+            controller: _passwordController,
+            decoration: InputDecoration(
+                labelText: 'Your secret password...',
+                prefixIcon: Icon(Icons.vpn_key),
+                suffixIcon: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // added line
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: _isPasswordVisible
+                            ? Icon(Icons.visibility_off)
+                            : Icon(Icons.visibility),
+                        onPressed: () {
+                          this.togglePasswordVisibility();
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.emoji_symbols),
+                        onPressed: () {
+                          _passwordController.text =
+                              _generateRandomSecurePassword();
+                        },
+                      )
+                    ])),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'A password is required!';
+              }
+              return null;
+            },
+          ),
+        ),
+      ],
+    );
   }
 }
 
