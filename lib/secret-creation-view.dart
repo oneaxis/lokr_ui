@@ -24,20 +24,22 @@ class _SecretCreationViewState extends State<SecretCreationView> {
         appBar: AppBar(
           title: Text("New secret"),
         ),
-        body: Padding(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              children: [
-                Text(
-                    'Here you find all your stored secrets. Just click on one of the '
-                    'fields (e.g. password) to copy the content or extend the secret details.',
-                    style: Theme.of(context).textTheme.bodyText1),
-                Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: Divider(thickness: 1)),
-                _SecretCreationForm(),
-              ],
-            )),
+        body: SingleChildScrollView(
+          child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Text(
+                      'Here you find all your stored secrets. Just click on one of the '
+                      'fields (e.g. password) to copy the content or extend the secret details.',
+                      style: Theme.of(context).textTheme.bodyText1),
+                  Padding(
+                      padding: EdgeInsets.only(top: 8, bottom: 8),
+                      child: Divider(thickness: 1)),
+                  _SecretCreationForm(),
+                ],
+              )),
+        ),
       ),
     );
   }
