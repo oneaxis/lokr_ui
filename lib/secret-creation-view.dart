@@ -55,15 +55,54 @@ class __SecretCreationFormState extends State<_SecretCreationForm> {
       _usernameController = TextEditingController(),
       _urlController = TextEditingController();
 
+  bool _isPasswordHidden = true;
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    _passwordController.dispose();
+    _titleController.dispose();
+    _usernameController.dispose();
+    _urlController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
         child: Column(
           children: [
-            _PasswordFormField(),
+            _TextFormField('Your secret password...',
+                obscureText: _isPasswordHidden,
+                controller: _passwordController,
+                prefix: Icon(Icons.vpn_key),
+                suffix: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // added line
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: _isPasswordHidden
+                            ? Icon(Icons.visibility_off)
+                            : Icon(Icons.visibility),
+                        onPressed: () {
+                          this.togglePasswordVisibility();
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.emoji_symbols),
+                        onPressed: () {
+                          _passwordController.text =
+                              _generateRandomSecurePassword();
+                        },
+                      )
+                    ]),
+                validators: [Validator.required]),
             _TextFormField('Enter the secrets title/purpose...',
-                prefix: Icon(Icons.edit), validators: [Validator.required]),
+                prefix: Icon(Icons.short_text),
+                validators: [Validator.required]),
             _TextFormField('Optional: Provide an username...',
                 prefix: Icon(Icons.person)),
             _TextFormField('Optional: Provide an URL...',
@@ -110,15 +149,34 @@ class __SecretCreationFormState extends State<_SecretCreationForm> {
           ],
         ));
   }
+
+  void togglePasswordVisibility() {
+    setState(() {
+      _isPasswordHidden = !_isPasswordHidden;
+    });
+  }
 }
 
 class _TextFormField extends StatelessWidget {
-  final TextEditingController _controller = TextEditingController();
+  TextEditingController controller = TextEditingController();
   final String label;
-  Icon suffix, prefix;
+  Widget suffix, prefix;
   List<Function> validators;
+  bool obscureText = false;
 
-  _TextFormField(this.label, {this.suffix, this.prefix, this.validators});
+  _TextFormField(this.label,
+      {this.suffix,
+      this.prefix,
+      this.validators,
+      this.controller,
+      this.obscureText});
+
+  String validate(String value) {
+    for (final validator in validators) {
+      return validator(value);
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,81 +185,21 @@ class _TextFormField extends StatelessWidget {
         Expanded(
           flex: 8,
           child: TextFormField(
-            controller: _controller,
+            obscureText: this.obscureText ?? false,
+            onChanged: (value) {
+              this.validate(value);
+            },
+            controller: controller,
             decoration: InputDecoration(
               labelText: label,
               prefixIcon: prefix ?? prefix,
               suffixIcon: suffix ?? suffix,
             ),
             validator: (value) {
-              for (final validator in validators) {
-                return validator(value);
-              }
-              return null;
+              return this.validate(value);
             },
           ),
         )
-      ],
-    );
-  }
-}
-
-class _PasswordFormField extends StatefulWidget {
-  @override
-  _PasswordFormFieldState createState() => _PasswordFormFieldState();
-}
-
-class _PasswordFormFieldState extends State<_PasswordFormField> {
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
-
-  void togglePasswordVisibility() {
-    this.setState(() {
-      _isPasswordVisible = !_isPasswordVisible;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 8,
-          child: TextFormField(
-            obscureText: !_isPasswordVisible,
-            controller: _passwordController,
-            decoration: InputDecoration(
-                labelText: 'Your secret password...',
-                prefixIcon: Icon(Icons.vpn_key),
-                suffixIcon: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    // added line
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: _isPasswordVisible
-                            ? Icon(Icons.visibility_off)
-                            : Icon(Icons.visibility),
-                        onPressed: () {
-                          this.togglePasswordVisibility();
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.emoji_symbols),
-                        onPressed: () {
-                          _passwordController.text =
-                              _generateRandomSecurePassword();
-                        },
-                      )
-                    ])),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'A password is required!';
-              }
-              return null;
-            },
-          ),
-        ),
       ],
     );
   }
