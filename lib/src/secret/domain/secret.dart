@@ -15,4 +15,18 @@ class Secret {
   String toString() {
     return 'Secret{password: $password, title: $title, username: $username, url: $url}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Secret &&
+          runtimeType == other.runtimeType &&
+          password == other.password &&
+          title == other.title &&
+          username == other.username &&
+          url == other.url;
+
+  @override
+  int get hashCode =>
+      password.hashCode ^ title.hashCode ^ username.hashCode ^ url.hashCode;
 }

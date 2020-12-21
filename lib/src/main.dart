@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lokr_ui/secret-list-view.dart';
+import 'package:lokr_ui/src/secret/ui/secret-list-view.dart';
 
 void main() {
   runApp(LOKRUI());

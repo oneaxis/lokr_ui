@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lokr_ui/messaging-service.dart';
-import 'package:lokr_ui/secret-creation-view.dart';
-import 'package:lokr_ui/secret.dart';
-import 'package:lokr_ui/secrets-service.dart';
+import 'package:lokr_ui/src/messaging-service.dart';
+import 'package:lokr_ui/src/secret/domain/secret.dart';
+import 'package:lokr_ui/src/secret/ui/secret-detail-view.dart';
+
+import '../network/secrets-service.dart';
 
 class SecretListView extends StatefulWidget {
   final String title = 'Stored secrets';
@@ -67,7 +68,7 @@ class _SecretListViewState extends State<SecretListView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SecretCreationView()));
+              MaterialPageRoute(builder: (context) => SecretDetailView()));
         },
         tooltip: 'Create new secret',
         child: Icon(Icons.add),

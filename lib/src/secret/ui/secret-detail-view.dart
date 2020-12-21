@@ -1,18 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lokr_ui/secret.dart';
-import 'package:lokr_ui/validator.dart';
+import 'package:form_validator/form_validator.dart';
+import 'package:lokr_ui/src/messaging-service.dart';
+import 'package:lokr_ui/src/secret/domain/secret.dart';
 
-import 'messaging-service.dart';
+import '../../lokrui-text-form-field.dart';
 
-class SecretCreationView extends StatefulWidget {
-  const SecretCreationView({Key key}) : super(key: key);
+class SecretDetailView extends StatefulWidget {
+  SecretDetailView({Key key}) : super(key: key);
 
   @override
-  _SecretCreationViewState createState() => _SecretCreationViewState();
+  _SecretDetailViewState createState() => _SecretDetailViewState();
 }
 
-class _SecretCreationViewState extends State<SecretCreationView> {
+class _SecretDetailViewState extends State<SecretDetailView> {
   @override
   Widget build(BuildContext context) {
     return new WillPopScope(
@@ -36,7 +37,7 @@ class _SecretCreationViewState extends State<SecretCreationView> {
                   Padding(
                       padding: EdgeInsets.only(top: 8, bottom: 8),
                       child: Divider(thickness: 1)),
-                  _SecretCreationForm(),
+                  _SecretDetailForm(),
                 ],
               )),
         ),
@@ -45,40 +46,55 @@ class _SecretCreationViewState extends State<SecretCreationView> {
   }
 }
 
-class _SecretCreationForm extends StatefulWidget {
+class _SecretDetailForm extends StatefulWidget {
   @override
-  __SecretCreationFormState createState() => __SecretCreationFormState();
+  _SecretDetailFormState createState() => _SecretDetailFormState();
 }
 
-class __SecretCreationFormState extends State<_SecretCreationForm> {
+class _SecretDetailFormState extends State<_SecretDetailForm> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _passwordController = TextEditingController(),
-      _titleController = TextEditingController(),
-      _usernameController = TextEditingController(),
-      _urlController = TextEditingController();
+  final Map<String, TextEditingController> _controllers = {
+    'password': TextEditingController(),
+    'title': TextEditingController(),
+    'username': TextEditingController(),
+    'url': TextEditingController(),
+  };
 
   bool _isPasswordHidden = true;
+  Secret editingSecret;
+  Secret initialSecret = Secret();
+
+  @override
+  void initState() {
+    editingSecret = Secret(
+      password: _controllers['password'].text,
+      title: _controllers['title'].text,
+      username: _controllers['username'].text,
+      url: _controllers['url'].text
+    );
+  }
 
   @override
   void dispose() {
     // Clean up the controller when the widget is removed from the
     // widget tree.
-    _passwordController.dispose();
-    _titleController.dispose();
-    _usernameController.dispose();
-    _urlController.dispose();
+    for (var controller in this._controllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Form(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         key: _formKey,
         child: Column(
           children: [
-            _TextFormField('Your secret password...',
+            LOKRUITextFormField(
+                label: 'Your secret password...',
                 obscureText: _isPasswordHidden,
-                controller: _passwordController,
+                controller: _controllers['password'],
                 prefix: Icon(Icons.vpn_key),
                 suffix: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,8 +103,8 @@ class __SecretCreationFormState extends State<_SecretCreationForm> {
                     children: [
                       IconButton(
                         icon: _isPasswordHidden
-                            ? Icon(Icons.visibility_off)
-                            : Icon(Icons.visibility),
+                            ? Icon(Icons.visibility)
+                            : Icon(Icons.visibility_off),
                         onPressed: () {
                           this.togglePasswordVisibility();
                         },
@@ -96,18 +112,34 @@ class __SecretCreationFormState extends State<_SecretCreationForm> {
                       IconButton(
                         icon: Icon(Icons.emoji_symbols),
                         onPressed: () {
-                          _passwordController.text =
+                          _controllers['password'].text =
                               _generateRandomSecurePassword();
                         },
                       )
                     ]),
-                validators: [Validator.required]),
-            _TextFormField('Enter the secrets title/purpose...',
+                validator:
+                    ValidationBuilder().minLength(3).maxLength(255).build()),
+            LOKRUITextFormField(
+                label: 'Enter the secrets title/purpose...',
                 prefix: Icon(Icons.short_text),
-                validators: [Validator.required]),
-            _TextFormField('Optional: Provide an username...',
-                prefix: Icon(Icons.person)),
-            _TextFormField('Optional: Provide an URL...',
+                controller: _controllers['title'],
+                validator:
+                    ValidationBuilder().minLength(3).maxLength(255).build()),
+            LOKRUITextFormField(
+              label: 'Optional: Provide an username...',
+              controller: _controllers['username'],
+              prefix: Icon(Icons.person),
+              validator: ValidationBuilder().maxLength(255).build(),
+            ),
+            LOKRUITextFormField(
+                label: 'Optional: Provide an URL...',
+                controller: _controllers['url'],
+                validator: ValidationBuilder()
+                    .or(
+                        (builder) => builder.regExp(
+                            RegExp(r'^$'), _controllers['url'].text),
+                        (builder) => builder.url())
+                    .build(),
                 prefix: Icon(Icons.link)),
             Row(
               children: [
@@ -116,9 +148,9 @@ class __SecretCreationFormState extends State<_SecretCreationForm> {
                     padding: EdgeInsets.only(right: 8, top: 8),
                     child: FlatButton(
                       onPressed: () {
-                        // Validate returns true if the form is valid, or false
-                        // otherwise.
-                        _showOnPopDialog(context);
+
+                        // if (! (editingSecret == initialSecret)) //TODO: implement
+                          _showOnPopDialog(context);
                       },
                       child: Text("Cancel creation"),
                     ),
@@ -129,14 +161,12 @@ class __SecretCreationFormState extends State<_SecretCreationForm> {
                     padding: EdgeInsets.only(right: 8, top: 8),
                     child: ElevatedButton(
                       onPressed: () {
-                        // Validate returns true if the form is valid, or false
-                        // otherwise.
                         if (_formKey.currentState.validate()) {
                           Secret secret = Secret(
-                            password: _passwordController.text,
-                            title: _titleController.text,
-                            username: _usernameController.text,
-                            url: _urlController.text,
+                            password: _controllers['password'].text,
+                            title: _controllers['title'].text,
+                            username: _controllers['username'].text,
+                            url: _controllers['url'].text,
                           );
                           MessagingService.showSnackBarMessage(
                               context, 'Processing Data for $secret');
@@ -156,54 +186,6 @@ class __SecretCreationFormState extends State<_SecretCreationForm> {
     setState(() {
       _isPasswordHidden = !_isPasswordHidden;
     });
-  }
-}
-
-class _TextFormField extends StatelessWidget {
-  TextEditingController controller = TextEditingController();
-  final String label;
-  Widget suffix, prefix;
-  List<Function> validators;
-  bool obscureText = false;
-
-  _TextFormField(this.label,
-      {this.suffix,
-      this.prefix,
-      this.validators,
-      this.controller,
-      this.obscureText});
-
-  String validate(String value) {
-    for (final validator in validators) {
-      return validator(value);
-    }
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 8,
-          child: TextFormField(
-            obscureText: this.obscureText ?? false,
-            onChanged: (value) {
-              this.validate(value);
-            },
-            controller: controller,
-            decoration: InputDecoration(
-              labelText: label,
-              prefixIcon: prefix ?? prefix,
-              suffixIcon: suffix ?? suffix,
-            ),
-            validator: (value) {
-              return this.validate(value);
-            },
-          ),
-        )
-      ],
-    );
   }
 }
 
