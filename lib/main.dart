@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lokr_ui/src/secret/ui/secret-list-view.dart';
+import 'package:lokr_ui/src/secret/ui/secret-list.dart';
 
 void main() {
   runApp(LOKRUI());
@@ -30,7 +30,9 @@ class LOKRUI extends StatelessWidget {
           bodyText1: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
         ),
       ),
-      home: SecretListView(),
+      home: Center(
+        child: SecretList(),
+      ),
     );
   }
 }

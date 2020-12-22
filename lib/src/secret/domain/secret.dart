@@ -7,8 +7,14 @@ class Secret {
   final String password, title;
   String username, url;
 
-  Secret({this.password, this.title, this.url, this.username});
+  Secret({this.password, this.title, String url, String username}) {
+    // Add defaults for null safety
+    this.url = url ?? '';
+    this.username = username ?? '';
+  }
+
   factory Secret.fromJson(Map<String, dynamic> json) => _$SecretFromJson(json);
+
   Map<String, dynamic> toJson() => _$SecretToJson(this);
 
   @override
