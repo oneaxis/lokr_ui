@@ -65,7 +65,7 @@ class SecretGenerator {
     if (evaluatedCharacterSets.length > options.length && options.strict) {
       const errorMessage = 'Couldn\'t apply mode strict whenever the ' +
           'amount of selected character sets is higher than the actual password length!';
-      throw new Exception(errorMessage);
+      throw Exception(errorMessage);
     }
 
     String evaluatedCharacters = '';

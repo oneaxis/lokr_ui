@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:lokr_ui/src/encryption_wrapper.dart';
 import 'package:http/http.dart' as http;
+import 'package:lokr_ui/src/secret/application_configuration.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
 
 class SecretAPIService {
-  static final String _apiServer = 'http://192.168.178.23:1234';
+  static final String _apiURL = ApplicationConfiguration.apiURL;
+  static final String _secretsEndpoint = ApplicationConfiguration.secretsEndpoint;
   static final SecretAPIService _instance = SecretAPIService._internal();
 
   factory SecretAPIService() => _instance;
@@ -14,7 +16,7 @@ class SecretAPIService {
 
   static Future<Secret> storeSecret(Secret secret) async {
     final response =
-        await http.post('$_apiServer/api/secrets/', body: secret.toJson());
+        await http.post('$_apiURL$_secretsEndpoint', body: secret.toJson());
 
     if (response.statusCode == 201) {
       var decodedResponse = jsonDecode(response.body);
@@ -28,7 +30,8 @@ class SecretAPIService {
   }
 
   static Future<List<Secret>> fetchAllSecrets() async {
-    final response = await http.get('$_apiServer/api/secrets/');
+    print('$_apiURL$_secretsEndpoint');
+    final response = await http.get('$_apiURL$_secretsEndpoint');
 
     if (response.statusCode == 200) {
       var decodedResponse = jsonDecode(response.body);

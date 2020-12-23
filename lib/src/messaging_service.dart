@@ -7,6 +7,6 @@ class MessagingService {
     Scaffold.of(context)
       ..removeCurrentSnackBar()
       ..showSnackBar(
-          SnackBar(content: Text(content), duration: Duration(seconds: 1)));
+          SnackBar(content: Text(content), duration: Duration(milliseconds: 2000)));
   }
 }

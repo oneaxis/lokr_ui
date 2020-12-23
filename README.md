@@ -19,3 +19,7 @@ To get life into your application and fill it with mock data, use (see [docker-c
 ```bash
 docker-compose up 
 ```
+
+### Environments
+To use a specific environment, provide a `.env` at the projects top level. Example `.env` files are 
+located in [environments](./environments) (don't forget to rename the files).
