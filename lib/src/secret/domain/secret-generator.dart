@@ -4,26 +4,36 @@ class SecretGenerator {
   /// Use this method to generate a password based on a provided set of Options.
   /// @param options Options. If not set, DefaultOptions will be used.
   static Future<String> generateRandomPassword({Options options}) {
-    return Future(() => SecretGenerator()._generateRandomPassword(options: options));
+    return Future(() =>
+        SecretGenerator()._generateRandomPassword(options: options));
   }
 
   String _generateRandomPassword({Options options}) {
     final GeneratorPolicy generatorPolicy =
-        this._evaluateOptions(options ?? DefaultOptions());
+    this._evaluateOptions(options ?? DefaultOptions());
 
     String result = '';
     int charactersLength = generatorPolicy.characterSet.length;
     while (result.length < generatorPolicy.length ||
         !this._isValidAgainstPolicy(result, generatorPolicy)) {
-      result += generatorPolicy
+      String charToInsert = generatorPolicy
           .characterSet[Random.secure().nextInt(charactersLength - 1)];
 
-      if (result.length > generatorPolicy.length) {
-        result = result.substring(0, generatorPolicy.length - 1);
+      if (result.length == generatorPolicy.length){
+        result =
+            _replaceCharAt(result, Random.secure().nextInt(result.length - 1), charToInsert);
+      } else {
+        result += generatorPolicy
+            .characterSet[Random.secure().nextInt(charactersLength - 1)];
       }
     }
 
     return result;
+  }
+
+  String _replaceCharAt(String oldString, int index, String newChar) {
+    return oldString.substring(0, index) + newChar +
+        oldString.substring(index + 1);
   }
 
   GeneratorPolicy _evaluateOptions(Options options) {
@@ -101,11 +111,10 @@ class GeneratorPolicy {
   final String characterSet;
   final bool strict;
 
-  const GeneratorPolicy(
-      {this.length,
-      this.requiredCharacterSets,
-      this.characterSet,
-      this.strict});
+  const GeneratorPolicy({this.length,
+    this.requiredCharacterSets,
+    this.characterSet,
+    this.strict});
 }
 
 class Options {
