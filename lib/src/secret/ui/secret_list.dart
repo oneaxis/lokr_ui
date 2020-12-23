@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lokr_ui/src/messaging-service.dart';
+import 'package:lokr_ui/src/messaging_service.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/ui/secret-detail.dart';
-import 'package:lokr_ui/src/secret/ui/secret-list-item.dart';
+import 'package:lokr_ui/src/secret/ui/secret_detail.dart';
+import 'package:lokr_ui/src/secret/ui/secret_list_item.dart';
 
-import '../network/secret-api-service.dart';
+import '../network/secret_api_service.dart';
 
 class SecretList extends StatelessWidget {
   @override

@@ -1,9 +1,9 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lokr_ui/src/messaging-service.dart';
+import 'package:lokr_ui/src/messaging_service.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/ui/secret-detail.dart';
+import 'package:lokr_ui/src/secret/ui/secret_detail.dart';
 
 class SecretListItem extends StatelessWidget {
   final Secret secret;

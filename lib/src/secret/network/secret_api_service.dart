@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:lokr_ui/src/encryption-wrapper.dart';
+import 'package:lokr_ui/src/encryption_wrapper.dart';
 import 'package:http/http.dart' as http;
 import 'package:lokr_ui/src/secret/domain/secret.dart';
 
