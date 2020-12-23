@@ -26,7 +26,7 @@ class SecretList extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyText1),
               Divider(thickness: 1),
               Expanded(
-                child: _ListView(),
+                child: _RefreshableListView(),
               )
             ],
           )),
@@ -47,47 +47,61 @@ class SecretList extends StatelessWidget {
   }
 }
 
-class _ListView extends StatelessWidget {
+class _RefreshableListView extends StatefulWidget {
+  @override
+  _RefreshableListViewState createState() => _RefreshableListViewState();
+}
+
+class _RefreshableListViewState extends State<_RefreshableListView> {
+  Future<void> _refreshState() async {
+    setState(() {});
+    return Future(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Secret>>(
-      future: SecretAPIService.fetchAllSecrets(), // async work
-      builder: (BuildContext context, AsyncSnapshot<List<Secret>> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Padding(
-                padding: EdgeInsets.all(8),
-                child: Column(
-                  children: [
-                    Text('Loading stored secrets...',
-                        style: Theme.of(context).textTheme.bodyText1),
-                    Padding(
-                      padding: EdgeInsets.only(top: 16),
-                      child: LinearProgressIndicator(),
-                    )
-                  ],
-                ));
-          default:
-            if (snapshot.hasError) {
-              return Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('Could not load stored secrets at the moment',
-                      style: Theme.of(context).textTheme.bodyText1));
-            } else {
-              return snapshot.data.isEmpty
-                  ? Padding(
+    return RefreshIndicator(
+        child: FutureBuilder<List<Secret>>(
+          future: SecretAPIService.fetchAllSecrets(),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Secret>> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      children: [
+                        Text('Loading stored secrets...',
+                            style: Theme.of(context).textTheme.bodyText1),
+                        Padding(
+                          padding: EdgeInsets.only(top: 16),
+                          child: LinearProgressIndicator(),
+                        )
+                      ],
+                    ));
+              default:
+                if (snapshot.hasError) {
+                  return Padding(
                       padding: EdgeInsets.all(8),
-                      child: Text(
-                          "You don't have any stored secret yet. Create one first!",
-                          style: Theme.of(context).textTheme.bodyText1))
-                  : ListView(
-                      shrinkWrap: true,
-                      children:
-                          snapshot.data.map((e) => SecretListItem(e)).toList(),
-                    );
+                      child: Text('Could not load stored secrets at the moment',
+                          style: Theme.of(context).textTheme.bodyText1));
+                } else {
+                  return snapshot.data.isEmpty
+                      ? Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Text(
+                              "You don't have any stored secret yet. Create one first!",
+                              style: Theme.of(context).textTheme.bodyText1))
+                      : ListView(
+                          shrinkWrap: true,
+                          children: snapshot.data
+                              .map((e) => SecretListItem(e))
+                              .toList(),
+                        );
+                }
             }
-        }
-      },
-    );
+          },
+        ),
+        onRefresh: this._refreshState);
   }
 }
