@@ -69,12 +69,17 @@ class _ListView extends StatelessWidget {
                 ));
           default:
             if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text('Could not load stored secrets at the moment',
+                      style: Theme.of(context).textTheme.bodyText1));
             } else {
               return snapshot.data.isEmpty
-                  ? Text(
-                      "You don't have any stored secret yet. Create one first!",
-                      style: Theme.of(context).textTheme.bodyText1)
+                  ? Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Text(
+                          "You don't have any stored secret yet. Create one first!",
+                          style: Theme.of(context).textTheme.bodyText1))
                   : ListView(
                       shrinkWrap: true,
                       children:
