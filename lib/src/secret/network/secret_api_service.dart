@@ -8,11 +8,6 @@ import 'package:lokr_ui/src/secret/domain/secret.dart';
 class SecretAPIService {
   static final String _apiURL = ApplicationConfiguration.apiURL;
   static final String _secretsEndpoint = ApplicationConfiguration.secretsEndpoint;
-  static final SecretAPIService _instance = SecretAPIService._internal();
-
-  factory SecretAPIService() => _instance;
-
-  SecretAPIService._internal();
 
   static Future<Secret> storeSecret(Secret secret) async {
     final response =
@@ -30,7 +25,6 @@ class SecretAPIService {
   }
 
   static Future<List<Secret>> fetchAllSecrets() async {
-    print('$_apiURL$_secretsEndpoint');
     final response = await http.get('$_apiURL$_secretsEndpoint');
 
     if (response.statusCode == 200) {
