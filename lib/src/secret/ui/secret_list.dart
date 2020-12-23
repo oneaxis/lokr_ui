@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lokr_ui/src/messaging-service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:lokr_ui/src/messaging_service.dart';
+import 'package:lokr_ui/src/secret/application_configuration.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/ui/secret-detail.dart';
-import 'package:lokr_ui/src/secret/ui/secret-list-item.dart';
+import 'package:lokr_ui/src/secret/ui/secret_detail.dart';
+import 'package:lokr_ui/src/secret/ui/secret_list_item.dart';
 
-import '../network/secret-api-service.dart';
+import '../network/secret_api_service.dart';
 
 class SecretList extends StatelessWidget {
   @override
@@ -20,11 +22,44 @@ class SecretList extends StatelessWidget {
           padding: EdgeInsets.all(8),
           child: Column(
             children: [
-              Text(
-                  'Here you find all your stored secrets. Just click on one of the '
-                  'fields (e.g. password) to copy the content or extend the secret details.',
-                  style: Theme.of(context).textTheme.bodyText1),
-              Divider(thickness: 1),
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyText1,
+                  children: [
+                    TextSpan(
+                      text:
+                      'Copy passwords with (',
+                    ),
+                    WidgetSpan(
+                      child: Icon(Icons.vpn_key, size: 14),
+                    ),
+                    TextSpan(
+                      text: '), usernames with (',
+                    ),
+                    WidgetSpan(
+                      child: Icon(Icons.person, size: 14),
+                    ),
+                    TextSpan(
+                      text: '), open URLs with (',
+                    ),
+                    WidgetSpan(
+                      child: Icon(Icons.link, size: 14),
+                    ),
+                    TextSpan(
+                      text: ') or edit the secret details with (',
+                    ),
+                    WidgetSpan(
+                      child: Icon(Icons.edit, size: 14),
+                    ),
+                    TextSpan(
+                      text: ').',
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(top: 8, bottom: 8),
+                  child: Divider(thickness: 1)),
               Expanded(
                 child: _RefreshableListView(),
               )
@@ -55,7 +90,7 @@ class _RefreshableListView extends StatefulWidget {
 class _RefreshableListViewState extends State<_RefreshableListView> {
   Future<void> _refreshState() async {
     setState(() {});
-    return Future(() {});
+    return;
   }
 
   @override
@@ -68,7 +103,7 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
                 return Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.only(top: 8),
                     child: Column(
                       children: [
                         Text('Loading stored secrets...',
@@ -82,13 +117,25 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
               default:
                 if (snapshot.hasError) {
                   return Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Text('Could not load stored secrets at the moment',
-                          style: Theme.of(context).textTheme.bodyText1));
+                      padding: EdgeInsets.only(top: 8),
+                      child: Column(
+                        children: [
+                          Text(
+                              'Could not load stored secrets at the moment. '
+                              'Please check your internet connection.',
+                              style: Theme.of(context).textTheme.bodyText1),
+                          Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: ElevatedButton(
+                                onPressed: this._refreshState,
+                                child: Text('Retry'),
+                              )),
+                        ],
+                      ));
                 } else {
                   return snapshot.data.isEmpty
                       ? Padding(
-                          padding: EdgeInsets.all(8),
+                          padding: EdgeInsets.only(top: 8),
                           child: Text(
                               "You don't have any stored secret yet. Create one first!",
                               style: Theme.of(context).textTheme.bodyText1))

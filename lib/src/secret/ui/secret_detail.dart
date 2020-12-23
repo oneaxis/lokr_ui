@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
-import 'package:lokr_ui/src/messaging-service.dart';
-import 'package:lokr_ui/src/secret/domain/secret-generator.dart';
+import 'package:lokr_ui/src/messaging_service.dart';
+import 'package:lokr_ui/src/secret/domain/secret_generator.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/network/secret-api-service.dart';
+import 'package:lokr_ui/src/secret/network/secret_api_service.dart';
 
-import 'secret-text-form-field.dart';
+import 'secret_text_form_field.dart';
 
 class SecretDetail extends StatefulWidget {
   final Secret secret;

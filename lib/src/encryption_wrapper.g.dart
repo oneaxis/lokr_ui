@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'encryption-wrapper.dart';
+part of 'encryption_wrapper.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

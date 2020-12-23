@@ -1,9 +1,10 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lokr_ui/src/messaging-service.dart';
+import 'package:lokr_ui/src/messaging_service.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/ui/secret-detail.dart';
+import 'package:lokr_ui/src/secret/ui/secret_detail.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SecretListItem extends StatelessWidget {
   final Secret secret;
@@ -55,11 +56,7 @@ class SecretListItem extends StatelessWidget {
                   icon: Icons.link,
                   onPressAction: this.secret.url.isNotEmpty
                       ? () {
-                          FlutterClipboard.copy(this.secret.url).then((value) {
-                            // Do what ever you want with the value.
-                            MessagingService.showSnackBarMessage(
-                                context, 'URL copied to clipboard');
-                          });
+                          this._launchURL(this.secret.url, context);
                         }
                       : null),
             ),
@@ -82,6 +79,18 @@ class SecretListItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _launchURL(String URL, BuildContext context) async {
+    if (await canLaunch(URL)) {
+      MessagingService.showSnackBarMessage(
+          context, 'Opening URL ${this.secret.url}...');
+      await launch(URL);
+    } else {
+      MessagingService.showSnackBarMessage(
+          context, '${this.secret.url} is not a valid URL. Cannot open it.');
+      throw '${this.secret.url} is not a valid URL. Cannot open it.';
+    }
   }
 }
 

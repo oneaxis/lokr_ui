@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'encryption-wrapper.g.dart';
+part 'encryption_wrapper.g.dart';
 
 @JsonSerializable()
 class EncryptionWrapper {
