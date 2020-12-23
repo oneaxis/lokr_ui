@@ -4,7 +4,7 @@ import 'package:form_validator/form_validator.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
 import 'package:lokr_ui/src/secret/domain/secret_generator.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/network/secret_api_service.dart';
+import 'package:lokr_ui/src/secret/resources/secret_repository.dart';
 
 import 'secret_text_form_field.dart';
 
@@ -270,7 +270,7 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
   void _validateAndStore(BuildContext context) {
     if (_formKey.currentState.validate()) {
       MessagingService.showSnackBarMessage(context, 'Storing secret...');
-      SecretAPIService.storeSecret(this._getSecretFromForm())
+      SecretRepository.storeSecret(this._getSecretFromForm())
           .then((Secret value) => {Navigator.of(context).pop(value)})
           .catchError((error) => {
                 setState(() {

@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
-import 'package:lokr_ui/src/secret/application_configuration.dart';
+import 'package:lokr_ui/src/secret/blocs/secret_bloc.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
+import 'package:lokr_ui/src/secret/resources/secret_repository.dart';
 import 'package:lokr_ui/src/secret/ui/secret_detail.dart';
 import 'package:lokr_ui/src/secret/ui/secret_list_item.dart';
 
-import '../network/secret_api_service.dart';
 
 class SecretList extends StatelessWidget {
   @override
@@ -82,22 +81,33 @@ class SecretList extends StatelessWidget {
   }
 }
 
+
 class _RefreshableListView extends StatefulWidget {
   @override
   _RefreshableListViewState createState() => _RefreshableListViewState();
 }
 
 class _RefreshableListViewState extends State<_RefreshableListView> {
+
+  final _secretBloc = SecretBloc();
+
   Future<void> _refreshState() async {
-    setState(() {});
+    this._secretBloc.fetchAllSecrets();
     return;
   }
 
   @override
+  void dispose() {
+    this._secretBloc.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    this._secretBloc.fetchAllSecrets();
     return RefreshIndicator(
-        child: FutureBuilder<List<Secret>>(
-          future: SecretAPIService.fetchAllSecrets(),
+        child: StreamBuilder<List<Secret>>(
+          stream: _secretBloc.allSecrets,
           builder:
               (BuildContext context, AsyncSnapshot<List<Secret>> snapshot) {
             switch (snapshot.connectionState) {
