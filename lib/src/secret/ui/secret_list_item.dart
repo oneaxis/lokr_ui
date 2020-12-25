@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/ui/secret_detail.dart';
+import 'package:lokr_ui/src/secret/ui/secret_detail_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SecretListItem extends StatelessWidget {
@@ -67,7 +67,7 @@ class SecretListItem extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SecretDetail(
+                            builder: (context) => SecretDetailPage(
                                 secret: this.secret))).then((createdSecret) => {
                           if (createdSecret != null)
                             MessagingService.showSnackBarMessage(

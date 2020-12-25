@@ -8,29 +8,29 @@ import 'package:lokr_ui/src/secret/resources/secret_repository.dart';
 
 import 'secret_text_form_field.dart';
 
-class SecretDetail extends StatefulWidget {
+class SecretDetailPage extends StatefulWidget {
   final Secret secret;
   final isBlank;
 
-  SecretDetail.blank({Key key})
+  SecretDetailPage.blank({Key key})
       : this.secret = Secret(),
         this.isBlank = true,
         super(key: key);
 
-  SecretDetail({Key key, this.secret})
+  SecretDetailPage({Key key, this.secret})
       : this.isBlank = false,
         super(key: key);
 
   @override
-  _SecretDetailState createState() =>
-      _SecretDetailState(this.secret, this.isBlank);
+  _SecretDetailPageState createState() =>
+      _SecretDetailPageState(this.secret, this.isBlank);
 }
 
-class _SecretDetailState extends State<SecretDetail> {
+class _SecretDetailPageState extends State<SecretDetailPage> {
   Secret _secret = Secret();
   String title;
 
-  _SecretDetailState(this._secret, bool isBlank) {
+  _SecretDetailPageState(this._secret, bool isBlank) {
     this.title = isBlank ? 'Create new secret' : 'Edit secret';
   }
 
@@ -270,7 +270,7 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
   void _validateAndStore(BuildContext context) {
     if (_formKey.currentState.validate()) {
       MessagingService.showSnackBarMessage(context, 'Storing secret...');
-      SecretRepository.storeSecret(this._getSecretFromForm())
+      SecretsRepository.storeSecret(this._getSecretFromForm())
           .then((Secret value) => {Navigator.of(context).pop(value)})
           .catchError((error) => {
                 setState(() {
