@@ -5,14 +5,10 @@ part 'secret.g.dart';
 
 @JsonSerializable()
 class Secret extends Equatable {
-  final String password, title;
-  String username, url;
+  final String password, title, username, url;
 
-  Secret({this.password, this.title, String url, String username}) {
-    // Add defaults for null safety
-    this.url = url ?? '';
-    this.username = username ?? '';
-  }
+  Secret(
+      {this.password = '', this.title = '', this.username = '', this.url = ''});
 
   factory Secret.fromJson(Map<String, dynamic> json) => _$SecretFromJson(json);
 

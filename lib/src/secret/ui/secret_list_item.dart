@@ -40,7 +40,7 @@ class SecretListItem extends StatelessWidget {
             Expanded(
               child: _ListItemIconButtonView(
                   icon: Icons.person,
-                  onPressAction: this.secret.username.isNotEmpty
+                  onPressAction: this.secret.username != null && this.secret.username.isNotEmpty
                       ? () {
                           FlutterClipboard.copy(this.secret.username)
                               .then((value) {
@@ -54,7 +54,7 @@ class SecretListItem extends StatelessWidget {
             Expanded(
               child: _ListItemIconButtonView(
                   icon: Icons.link,
-                  onPressAction: this.secret.url.isNotEmpty
+                  onPressAction: this.secret.url != null && this.secret.url.isNotEmpty
                       ? () {
                           this._launchURL(this.secret.url, context);
                         }

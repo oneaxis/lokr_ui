@@ -16,8 +16,8 @@ class SecretsInitial extends SecretsState {
   SecretsInitial() : super(List.empty());
 }
 
-class SecretsFetchedAll extends SecretsState {
-  SecretsFetchedAll(List<Secret> secrets) : super(secrets);
+class SecretsFetchedWithSuccess extends SecretsState {
+  SecretsFetchedWithSuccess(List<Secret> secrets) : super(secrets);
 }
 
 class SecretsUpdatedSingle extends SecretsState {

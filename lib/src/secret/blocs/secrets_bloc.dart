@@ -22,7 +22,7 @@ class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
       yield SecretsFetchedWithError(this.state.secrets);
     }
 
-    yield SecretsFetchedAll(fetchedSecrets);
+    yield SecretsFetchedWithSuccess(fetchedSecrets);
   }
 
   @override

@@ -18,7 +18,16 @@ class SecretListPage extends StatelessWidget {
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: Text('My stored secrets'),
+          title: Row(
+            children: [
+              Icon(Icons.security),
+              Spacer(flex: 1,),
+              Expanded(
+                flex: 10,
+                child: Text('My stored secrets'),
+              ),
+            ],
+          ),
         ),
         body: Padding(
             padding: EdgeInsets.all(8),
@@ -94,7 +103,9 @@ class _RefreshableListView extends StatefulWidget {
 class _RefreshableListViewState extends State<_RefreshableListView> {
   @override
   Widget build(BuildContext context) {
-    final SecretsBloc _secretsBloc = BlocProvider.of<SecretsBloc>(context);
+    SecretsBloc _secretsBloc = BlocProvider.of<SecretsBloc>(context);
+    _secretsBloc.add(SecretsFetchAll());
+
     Future<void> _refreshState() async {
       _secretsBloc.add(SecretsFetchAll());
       return;
@@ -103,7 +114,7 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
     return RefreshIndicator(
         child: BlocBuilder<SecretsBloc, SecretsState>(
           builder: (context, state) {
-            if (state is SecretsInitial)
+            if (state is SecretsInitial) {
               return Padding(
                   padding: EdgeInsets.only(top: 8),
                   child: Column(
@@ -116,7 +127,7 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                       )
                     ],
                   ));
-            else if (state is SecretsFetchedAll) {
+            } else if (state is SecretsFetchedWithSuccess) {
               return state.secrets.isEmpty
                   ? Padding(
                       padding: EdgeInsets.only(top: 8),
@@ -140,7 +151,10 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                       Padding(
                           padding: EdgeInsets.only(top: 8),
                           child: ElevatedButton(
-                            onPressed: _refreshState,
+                            onPressed: () => {
+                              BlocProvider.of<SecretsBloc>(context)
+                                  .add(SecretsFetchAll())
+                            },
                             child: Text('Retry'),
                           )),
                     ],
