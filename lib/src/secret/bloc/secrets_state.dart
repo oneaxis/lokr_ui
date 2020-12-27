@@ -16,22 +16,32 @@ class SecretsInitial extends SecretsState {
   SecretsInitial() : super(List.empty());
 }
 
-class SecretsFetchedWithSuccess extends SecretsState {
-  SecretsFetchedWithSuccess(List<Secret> secrets) : super(secrets);
+class SecretsErrorState extends SecretsState {
+  final String error;
+
+  SecretsErrorState(List<Secret> secrets, this.error) : super(secrets);
 }
 
-class SecretsUpdatedSingle extends SecretsState {
-  SecretsUpdatedSingle(List<Secret> secrets) : super(secrets);
+class SecretsFetchAllSuccess extends SecretsState {
+  SecretsFetchAllSuccess(List<Secret> secrets) : super(secrets);
 }
 
-class SecretsDeletedSingle extends SecretsState {
-  SecretsDeletedSingle(List<Secret> secrets) : super(secrets);
+class SecretsStoreSingleError extends SecretsErrorState {
+  SecretsStoreSingleError(List<Secret> secrets, String error)
+      : super(secrets, error);
 }
 
-class SecretsAddedSingle extends SecretsState {
-  SecretsAddedSingle(List<Secret> secrets) : super(secrets);
+class SecretsUpdatedSingleError extends SecretsErrorState {
+  SecretsUpdatedSingleError(List<Secret> secrets, String error)
+      : super(secrets, error);
 }
 
-class SecretsFetchedWithError extends SecretsState {
-  SecretsFetchedWithError(List<Secret> secrets) : super(secrets);
+class SecretsDeleteSingleError extends SecretsErrorState {
+  SecretsDeleteSingleError(List<Secret> secrets, String error)
+      : super(secrets, error);
+}
+
+class SecretsFetchAllError extends SecretsErrorState {
+  SecretsFetchAllError(List<Secret> secrets, String error)
+      : super(secrets, error);
 }

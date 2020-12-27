@@ -9,4 +9,12 @@ class SecretsRepository {
   static Future<Secret> storeSecret(Secret secret) {
     return SecretAPIService.storeSecret(secret);
   }
+
+  static Future<Secret> updateSecret(Secret secret) {
+    return SecretAPIService.updateSecret(secret);
+  }
+
+  static Future<Secret> deleteSecret(Secret secret) {
+    return SecretAPIService.deleteSecret(secret);
+  }
 }

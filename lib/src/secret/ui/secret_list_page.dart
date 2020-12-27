@@ -2,10 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
-import 'package:lokr_ui/src/secret/blocs/secrets_bloc.dart';
-import 'package:lokr_ui/src/secret/blocs/secrets_event.dart';
-import 'package:lokr_ui/src/secret/blocs/secrets_state.dart';
-import 'package:lokr_ui/src/secret/domain/secret.dart';
+import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
+import 'package:lokr_ui/src/secret/bloc/secrets_event.dart';
+import 'package:lokr_ui/src/secret/bloc/secrets_state.dart';
 import 'package:lokr_ui/src/secret/ui/secret_detail_page.dart';
 import 'package:lokr_ui/src/secret/ui/secret_list_item.dart';
 
@@ -21,7 +20,9 @@ class SecretListPage extends StatelessWidget {
           title: Row(
             children: [
               Icon(Icons.security),
-              Spacer(flex: 1,),
+              Spacer(
+                flex: 1,
+              ),
               Expanded(
                 flex: 10,
                 child: Text('My stored secrets'),
@@ -103,13 +104,12 @@ class _RefreshableListView extends StatefulWidget {
 class _RefreshableListViewState extends State<_RefreshableListView> {
   @override
   Widget build(BuildContext context) {
-    SecretsBloc _secretsBloc = BlocProvider.of<SecretsBloc>(context);
-    _secretsBloc.add(SecretsFetchAll());
-
     Future<void> _refreshState() async {
-      _secretsBloc.add(SecretsFetchAll());
+      BlocProvider.of<SecretsBloc>(context).add(SecretsFetchAll());
       return;
     }
+
+    _refreshState();
 
     return RefreshIndicator(
         child: BlocBuilder<SecretsBloc, SecretsState>(
@@ -127,7 +127,7 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                       )
                     ],
                   ));
-            } else if (state is SecretsFetchedWithSuccess) {
+            } else if (state is SecretsFetchAllSuccess) {
               return state.secrets.isEmpty
                   ? Padding(
                       padding: EdgeInsets.only(top: 8),

@@ -7,7 +7,8 @@ import 'package:lokr_ui/src/secret/domain/secret.dart';
 
 class SecretAPIService {
   static final String _apiURL = ApplicationConfiguration.apiURL;
-  static final String _secretsEndpoint = ApplicationConfiguration.secretsEndpoint;
+  static final String _secretsEndpoint =
+      ApplicationConfiguration.secretsEndpoint;
 
   static Future<Secret> storeSecret(Secret secret) async {
     final response =
@@ -40,5 +41,13 @@ class SecretAPIService {
       // then throw an exception.
       throw 'Failed to load stored secrets!';
     }
+  }
+
+  static Future<Secret> updateSecret(Secret secret) {
+    throw 'Not implemented yet!';
+  }
+
+  static Future<Secret> deleteSecret(Secret secret) {
+    throw 'Not implemented yet!';
   }
 }

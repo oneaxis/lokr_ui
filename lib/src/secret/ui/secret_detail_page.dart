@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
+import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
 import 'package:lokr_ui/src/secret/domain/secret_generator.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
 import 'package:lokr_ui/src/secret/resources/secret_repository.dart';
@@ -149,8 +151,9 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
                           IconButton(
                             icon: Icon(Icons.emoji_symbols),
                             onPressed: () {
-                              SecretGenerator.generateRandomPassword().then(
-                                  (value) => _passwordController.text = value);
+                              SecretGenerator.generateRandomPasswordStream()
+                                  .listen((value) =>
+                                      _passwordController.text = value);
                             },
                           )
                         ]),
@@ -262,14 +265,14 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
     return Secret(
         password: _passwordController.text,
         title: _titleController.text,
-        username:
-            _usernameController.text.isEmpty ? null : _usernameController.text,
-        url: _urlController.text.isEmpty ? null : _urlController.text);
+        username: _usernameController.text,
+        url: _urlController.text);
   }
 
   void _validateAndStore(BuildContext context) {
     if (_formKey.currentState.validate()) {
       MessagingService.showSnackBarMessage(context, 'Storing secret...');
+
       SecretsRepository.storeSecret(this._getSecretFromForm())
           .then((Secret value) => {Navigator.of(context).pop(value)})
           .catchError((error) => {

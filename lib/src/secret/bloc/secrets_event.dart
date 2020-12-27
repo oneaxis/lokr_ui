@@ -15,6 +15,8 @@ class SecretsDeleteSingle extends SecretsEvent {
 
   SecretsDeleteSingle(this._secret);
 
+  Secret get secret => _secret;
+
   @override
   List<Object> get props => [this._secret];
 }
@@ -24,14 +26,18 @@ class SecretsUpdateSingle extends SecretsEvent {
 
   SecretsUpdateSingle(this._secret);
 
+  Secret get secret => _secret;
+
   @override
   List<Object> get props => [this._secret];
 }
 
-class SecretsAddSingle extends SecretsEvent {
+class SecretsStoreSingle extends SecretsEvent {
   final Secret _secret;
 
-  SecretsAddSingle(this._secret);
+  SecretsStoreSingle(this._secret);
+
+  Secret get secret => _secret;
 
   @override
   List<Object> get props => [this._secret];
