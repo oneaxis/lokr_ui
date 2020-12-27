@@ -10,8 +10,8 @@ Secret _$SecretFromJson(Map<String, dynamic> json) {
   return Secret(
     password: json['password'] as String,
     title: json['title'] as String,
-    url: json['url'] as String,
     username: json['username'] as String,
+    url: json['url'] as String,
   );
 }
 

@@ -1,16 +1,22 @@
 import 'dart:math';
 
+import 'package:lokr_ui/src/secret/domain/secret.dart';
+
 class SecretGenerator {
   /// Use this method to generate a password based on a provided set of Options.
   /// @param options Options. If not set, DefaultOptions will be used.
   static Future<String> generateRandomPassword({Options options}) {
-    return Future(() =>
-        SecretGenerator()._generateRandomPassword(options: options));
+    return Future(
+        () => SecretGenerator()._generateRandomPassword(options: options));
   }
 
-  String _generateRandomPassword({Options options}) {
+  static Stream<String> generateRandomPasswordStream({Options options}) async* {
+    yield* SecretGenerator()._generateRandomPasswordStream(options: options);
+  }
+
+  Stream<String> _generateRandomPasswordStream({Options options}) async* {
     final GeneratorPolicy generatorPolicy =
-    this._evaluateOptions(options ?? DefaultOptions());
+        _evaluateOptions(options ?? DefaultOptions());
 
     String result = '';
     int charactersLength = generatorPolicy.characterSet.length;
@@ -19,9 +25,32 @@ class SecretGenerator {
       String charToInsert = generatorPolicy
           .characterSet[Random.secure().nextInt(charactersLength - 1)];
 
-      if (result.length == generatorPolicy.length){
-        result =
-            _replaceCharAt(result, Random.secure().nextInt(result.length - 1), charToInsert);
+      if (result.length == generatorPolicy.length) {
+        result = _replaceCharAt(
+            result, Random.secure().nextInt(result.length - 1), charToInsert);
+      } else {
+        result += generatorPolicy
+            .characterSet[Random.secure().nextInt(charactersLength - 1)];
+      }
+
+      yield result;
+    }
+  }
+
+  String _generateRandomPassword({Options options}) {
+    final GeneratorPolicy generatorPolicy =
+        this._evaluateOptions(options ?? DefaultOptions());
+
+    String result = '';
+    int charactersLength = generatorPolicy.characterSet.length;
+    while (result.length < generatorPolicy.length ||
+        !this._isValidAgainstPolicy(result, generatorPolicy)) {
+      String charToInsert = generatorPolicy
+          .characterSet[Random.secure().nextInt(charactersLength - 1)];
+
+      if (result.length == generatorPolicy.length) {
+        result = _replaceCharAt(
+            result, Random.secure().nextInt(result.length - 1), charToInsert);
       } else {
         result += generatorPolicy
             .characterSet[Random.secure().nextInt(charactersLength - 1)];
@@ -32,7 +61,8 @@ class SecretGenerator {
   }
 
   String _replaceCharAt(String oldString, int index, String newChar) {
-    return oldString.substring(0, index) + newChar +
+    return oldString.substring(0, index) +
+        newChar +
         oldString.substring(index + 1);
   }
 
@@ -111,10 +141,11 @@ class GeneratorPolicy {
   final String characterSet;
   final bool strict;
 
-  const GeneratorPolicy({this.length,
-    this.requiredCharacterSets,
-    this.characterSet,
-    this.strict});
+  const GeneratorPolicy(
+      {this.length,
+      this.requiredCharacterSets,
+      this.characterSet,
+      this.strict});
 }
 
 class Options {

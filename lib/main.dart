@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:lokr_ui/src/secret/ui/secret_list.dart';
+import 'package:lokr_ui/src/secret/ui/secret_list_page.dart';
 
 Future main() async {
   await DotEnv().load('.env');
@@ -33,7 +33,7 @@ class LOKRUI extends StatelessWidget {
         ),
       ),
       home: Center(
-        child: SecretList(),
+        child: SecretListPage(),
       ),
     );
   }

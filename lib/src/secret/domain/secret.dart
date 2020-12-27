@@ -1,38 +1,20 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'secret.g.dart';
 
 @JsonSerializable()
-class Secret {
-  final String password, title;
-  String username, url;
+class Secret extends Equatable {
+  final String password, title, username, url;
 
-  Secret({this.password, this.title, String url, String username}) {
-    // Add defaults for null safety
-    this.url = url ?? '';
-    this.username = username ?? '';
-  }
+  Secret(
+      {this.password = '', this.title = '', this.username = '', this.url = ''});
 
   factory Secret.fromJson(Map<String, dynamic> json) => _$SecretFromJson(json);
 
   Map<String, dynamic> toJson() => _$SecretToJson(this);
 
   @override
-  String toString() {
-    return 'Secret{password: $password, title: $title, username: $username, url: $url}';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Secret &&
-          runtimeType == other.runtimeType &&
-          password == other.password &&
-          title == other.title &&
-          username == other.username &&
-          url == other.url;
-
-  @override
-  int get hashCode =>
-      password.hashCode ^ title.hashCode ^ username.hashCode ^ url.hashCode;
+  List<Object> get props =>
+      [this.password, this.title, this.username, this.url];
 }
