@@ -5,10 +5,14 @@ part 'secret.g.dart';
 
 @JsonSerializable()
 class Secret extends Equatable {
-  final String password, title, username, url;
+  final String password, title, username, url, description;
 
   Secret(
-      {this.password = '', this.title = '', this.username = '', this.url = ''});
+      {this.password = '',
+      this.title = '',
+      this.username = '',
+      this.url = '',
+      this.description = ''});
 
   factory Secret.fromJson(Map<String, dynamic> json) => _$SecretFromJson(json);
 
@@ -16,5 +20,5 @@ class Secret extends Equatable {
 
   @override
   List<Object> get props =>
-      [this.password, this.title, this.username, this.url];
+      [this.password, this.title, this.username, this.url, this.description];
 }

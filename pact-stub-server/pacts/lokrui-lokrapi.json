@@ -19,6 +19,7 @@
           "content": {
             "password": "mysecretpassword",
             "title": "Oneaxis Mail",
+            "description": "Access data for my Oneaxis Mail account",
             "username": "oneaxis@oneaxis.de",
             "url": "https://oneaxis.de"
           }
@@ -40,6 +41,7 @@
             "title": "Oneaxis Mail",
             "username": "oneaxis@oneaxis.de",
             "password": "mysecretpassword",
+            "description": "Access data for my Oneaxis Mail account",
             "url": "https://oneaxis.de"
           }
         },
@@ -72,6 +74,7 @@
               "title": "Oneaxis Mail",
               "username": "oneaxis@oneaxis.de",
               "password": "somepassword",
+              "description": "Access data for my Oneaxis Mail account",
               "url": "https://oneaxis.de"
             }
           },
@@ -80,6 +83,7 @@
             "content": {
               "title": "Oneaxis Mail",
               "password": "somepassword",
+              "description": "Access data for my Oneaxis Mail account",
               "url": "https://oneaxis.de"
             }
           },
@@ -120,6 +124,7 @@
             "title": "Oneaxis Mail",
             "username": "oneaxis@oneaxis.de",
             "url": "https://oneaxis.de",
+            "description": "Access data for my Oneaxis Mail account",
             "password": "mysecretpassword"
           }
         },
@@ -145,6 +150,7 @@
             "password": "mysecretpassword",
             "title": "Oneaxis Mail",
             "username": "oneaxis@oneaxis.de",
+            "description": "Access data for my Oneaxis Mail account",
             "url": "https://oneaxis.de"
           }
         },
@@ -162,8 +168,10 @@
         "body": {
           "id": "ID1",
           "content": {
-            "title": "Oneaxis Mail Updated",
+            "password": "mysecretpassword",
+            "title": "Oneaxis Mail",
             "username": "oneaxis@oneaxis.de",
+            "description": "Access data for my Oneaxis Mail account",
             "url": "https://oneaxis.de"
           }
         },
