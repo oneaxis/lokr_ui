@@ -288,5 +288,6 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
     this._titleController.text = this._initialSecret.title;
     this._usernameController.text = this._initialSecret.username;
     this._urlController.text = this._initialSecret.url;
+    this._descriptionController.text = this._initialSecret.description;
   }
 }
