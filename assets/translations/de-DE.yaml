@@ -14,6 +14,9 @@ pages:
     body:
       title: Gespeicherte Schlüssel
       description: Hier siehst Du alle Deine gespeicherten Schlüssel. Verwende die Aktionsschaltflächen, um das Kennwort oder Benutzernamen  in die Zwischenablage deines Geräts zu kopieren, die URL zu öffnen oder die Detailansicht um den Schlüssel zu bearbeiten.
+      search:
+        label: Gib einen Suchbegriff ein...
+        noResult: Es wurde nichts passendes gefunden!
       secretList:
         loading: Gespeicherte Schlüssel werden geladen...
         error: Gespeicherte Schlüssel können derzeit nicht geladen werden. Bitte überprüfe deine Internetverbindung!
