@@ -1,9 +1,10 @@
 import 'package:clipboard/clipboard.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/ui/secret_detail_page.dart';
+import 'package:lokr_ui/src/secret/ui/detail/secret_detail_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SecretListItem extends StatelessWidget {
@@ -22,43 +23,64 @@ class SecretListItem extends StatelessWidget {
           children: <Widget>[
             Expanded(
               flex: 3,
-              child: _ListItemTextView(
-                text: secret.title,
+              child: Padding(
+                padding: EdgeInsets.only(left: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _ListItemTextView(
+                      text: secret.title,
+                    ),
+                    if (secret.description != null &&
+                        secret.description.isNotEmpty)
+                      Text(
+                        secret.description,
+                        style: Theme.of(context).textTheme.caption,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                  ],
+                ),
               ),
             ),
             Expanded(
+              flex: 1,
               child: _ListItemIconButtonView(
                   icon: Icons.vpn_key,
                   onPressAction: () {
                     FlutterClipboard.copy(this.secret.password).then((value) {
                       // Do what ever you want with the value.
-                      MessagingService.showSnackBarMessage(
-                          context, 'Password copied to clipboard');
+                      MessagingService.showSnackBarMessage(context,
+                          tr('pages.list.body.secretList.actions.copy.password'));
                     });
                   }),
             ),
             Expanded(
+              flex: 1,
               child: _ListItemIconButtonView(
                   icon: Icons.person,
-                  onPressAction: this.secret.username != null && this.secret.username.isNotEmpty
+                  onPressAction: this.secret.username != null &&
+                          this.secret.username.isNotEmpty
                       ? () {
                           FlutterClipboard.copy(this.secret.username)
                               .then((value) {
                             // Do what ever you want with the value.
-                            MessagingService.showSnackBarMessage(
-                                context, 'Username copied to clipboard');
+                            MessagingService.showSnackBarMessage(context,
+                                tr('pages.list.body.secretList.actions.copy.username'));
                           });
                         }
                       : null),
             ),
             Expanded(
+              flex: 1,
               child: _ListItemIconButtonView(
                   icon: Icons.link,
-                  onPressAction: this.secret.url != null && this.secret.url.isNotEmpty
-                      ? () {
-                          this._launchURL(this.secret.url, context);
-                        }
-                      : null),
+                  onPressAction:
+                      this.secret.url != null && this.secret.url.isNotEmpty
+                          ? () {
+                              this._launchURL(context);
+                            }
+                          : null),
             ),
             Expanded(
               child: _ListItemIconButtonView(
@@ -67,11 +89,14 @@ class SecretListItem extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SecretDetailPage(
+                            builder: (context) => SecretDetailPage.editExisting(
                                 secret: this.secret))).then((createdSecret) => {
                           if (createdSecret != null)
                             MessagingService.showSnackBarMessage(
-                                context, 'Stored secret ${createdSecret.title}')
+                              context,
+                              tr('pages.list.snacks.stored',
+                                  namedArgs: {'title': createdSecret.title}),
+                            )
                         });
                   }),
             ),
@@ -81,15 +106,18 @@ class SecretListItem extends StatelessWidget {
     );
   }
 
-  void _launchURL(String URL, BuildContext context) async {
-    if (await canLaunch(URL)) {
+  void _launchURL(BuildContext context) async {
+    if (false && await canLaunch(this.secret.url)) {
       MessagingService.showSnackBarMessage(
-          context, 'Opening URL ${this.secret.url}...');
-      await launch(URL);
+          context,
+          tr('pages.list.body.secretList.actions.launch.url',
+              namedArgs: {'url': this.secret.url}));
+      await launch(this.secret.url);
     } else {
-      MessagingService.showSnackBarMessage(
-          context, '${this.secret.url} is not a valid URL. Cannot open it.');
-      throw '${this.secret.url} is not a valid URL. Cannot open it.';
+      String localizedErrorText =
+          tr('validation.url.error', namedArgs: {'url': this.secret.url});
+      MessagingService.showSnackBarMessage(context, localizedErrorText);
+      throw localizedErrorText;
     }
   }
 }
@@ -101,13 +129,10 @@ class _ListItemTextView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 12),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodyText1,
-        overflow: TextOverflow.ellipsis,
-      ),
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.bodyText1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

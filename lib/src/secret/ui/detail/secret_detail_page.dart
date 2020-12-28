@@ -1,73 +1,51 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
-import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
 import 'package:lokr_ui/src/secret/domain/secret_generator.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
 import 'package:lokr_ui/src/secret/resources/secret_repository.dart';
+import 'package:lokr_ui/src/secret/ui/secret_page_header.dart';
 
-import 'secret_text_form_field.dart';
+import '../lokrui_text_form_field.dart';
+import 'secret_optional_fields_expander.dart';
 
-class SecretDetailPage extends StatefulWidget {
+class SecretDetailPage extends StatelessWidget {
   final Secret secret;
-  final isBlank;
+  final bool isNewSecret;
 
-  SecretDetailPage.blank({Key key})
+  SecretDetailPage.createNew({Key key})
       : this.secret = Secret(),
-        this.isBlank = true,
+        this.isNewSecret = true,
         super(key: key);
 
-  SecretDetailPage({Key key, this.secret})
-      : this.isBlank = false,
+  SecretDetailPage.editExisting({Key key, this.secret})
+      : this.isNewSecret = false,
         super(key: key);
-
-  @override
-  _SecretDetailPageState createState() =>
-      _SecretDetailPageState(this.secret, this.isBlank);
-}
-
-class _SecretDetailPageState extends State<SecretDetailPage> {
-  Secret _secret = Secret();
-  String title;
-
-  _SecretDetailPageState(this._secret, bool isBlank) {
-    this.title = isBlank ? 'Create new secret' : 'Edit secret';
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(this.title),
+        title: Text(tr(this.isNewSecret
+            ? 'pages.detail.new.title'
+            : 'pages.detail.edit.title')),
       ),
       body: SingleChildScrollView(
         child: Padding(
             padding: EdgeInsets.all(8),
             child: Column(
               children: [
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyText1,
-                    children: [
-                      TextSpan(
-                        text:
-                            'Type in your secret content. Use the secure password generator (',
-                      ),
-                      WidgetSpan(
-                        child: Icon(Icons.emoji_symbols, size: 14),
-                      ),
-                      TextSpan(
-                        text: ') to quickly create a new password.',
-                      ),
-                    ],
-                  ),
+                SecretPageHeader(
+                  title: tr(this.isNewSecret
+                      ? 'pages.detail.new.body.title'
+                      : 'pages.detail.edit.body.title'),
+                  description: tr(this.isNewSecret
+                      ? 'pages.detail.new.body.description'
+                      : 'pages.detail.edit.body.description'),
                 ),
-                Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: Divider(thickness: 1)),
-                _SecretDetailForm(this._secret),
+                _SecretDetailForm(this.secret),
               ],
             )),
       ),
@@ -89,12 +67,11 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
   final _passwordController = TextEditingController(),
       _titleController = TextEditingController(),
       _usernameController = TextEditingController(),
-      _urlController = TextEditingController();
-
-  List<TextEditingController> _controllers = [];
-
-  bool _isPasswordHidden = true, _submitPressed = false, _isSubmitting = false;
+      _urlController = TextEditingController(),
+      _descriptionController = TextEditingController();
   final Secret _initialSecret;
+  List<TextEditingController> _controllers = [];
+  bool _isPasswordHidden = true, _submitPressed = false, _isSubmitting = false;
 
   _SecretDetailFormState(this._initialSecret);
 
@@ -106,8 +83,6 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
     this._controllers.forEach((element) {
       element.dispose();
     });
@@ -129,11 +104,13 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
             key: _formKey,
             child: Column(
               children: [
-                SecretTextFormField(
-                    label: 'Your secret password...',
+                LOKRUITextFormField(
+                    label: tr('pages.detail.fields.password.label'),
                     obscureText: _isPasswordHidden,
                     autofocus: _passwordController.text.isEmpty,
                     controller: _passwordController,
+                    maxLength: 255,
+                    keyboardType: TextInputType.visiblePassword,
                     prefix: Icon(Icons.vpn_key),
                     suffix: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -161,31 +138,24 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
                         .minLength(3)
                         .maxLength(255)
                         .build()),
-                SecretTextFormField(
-                    label: 'Enter the secrets title/purpose...',
+                LOKRUITextFormField(
+                    label: tr('pages.detail.fields.purpose.label'),
                     autofocus: _titleController.text.isEmpty,
+                    maxLength: 255,
                     prefix: Icon(Icons.short_text),
                     controller: _titleController,
                     validator: ValidationBuilder()
                         .minLength(3)
                         .maxLength(255)
                         .build()),
-                SecretTextFormField(
-                  label: 'Optional: Provide an username...',
-                  controller: _usernameController,
-                  prefix: Icon(Icons.person),
-                  validator: ValidationBuilder().maxLength(255).build(),
+                Padding(
+                  padding: EdgeInsets.only(top: 8, bottom: 8),
+                  child: SecretOptionalFieldsExpander(
+                    urlController: this._urlController,
+                    descriptionController: this._descriptionController,
+                    usernameController: this._usernameController,
+                  ),
                 ),
-                SecretTextFormField(
-                    label: 'Optional: Provide an URL...',
-                    controller: _urlController,
-                    validator: ValidationBuilder()
-                        .or(
-                            (builder) => builder.regExp(
-                                RegExp(r'^$'), _urlController.text),
-                            (builder) => builder.url())
-                        .build(),
-                    prefix: Icon(Icons.link)),
                 Row(
                   children: [
                     Expanded(
@@ -198,7 +168,9 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
                                 this._initialSecret.hashCode,
                                 this._getSecretFromForm().hashCode);
                           },
-                          child: Text("Cancel"),
+                          child: Text(
+                            tr('pages.detail.buttons.cancel.label'),
+                          ),
                         ),
                       ),
                     ),
@@ -211,7 +183,9 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
                               : () {
                                   this._validateAndStore(context);
                                 },
-                          child: Text('Store secret'),
+                          child: Text(
+                            tr('pages.detail.buttons.save.label'),
+                          ),
                         ),
                       ),
                     ),
@@ -231,22 +205,32 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
         builder: (BuildContext context) {
           // return object of type Dialog
           return AlertDialog(
-            title: new Text("Leaving secret editing?"),
-            content: new Text("You have not stored your secret yet. "
-                "If you go back, your changes will be lost."),
+            title: Text(
+              tr('pages.detail.popDialog.title'),
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            content: Text(
+              tr('pages.detail.popDialog.description'),
+              style: Theme.of(context).textTheme.bodyText2,
+            ),
             actions: <Widget>[
-              FlatButton(
-                child: new Text("Yes, go back"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-              ),
-              ElevatedButton(
-                child: new Text("No, continue editing"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+              Row(
+                children: [
+                  FlatButton(
+                      child:
+                          Text(tr('pages.detail.popDialog.buttons.back.label')),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      }),
+                  ElevatedButton(
+                    child: Text(
+                        tr('pages.detail.popDialog.buttons.continue.label')),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
               ),
             ],
           );
@@ -266,12 +250,13 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
         password: _passwordController.text,
         title: _titleController.text,
         username: _usernameController.text,
-        url: _urlController.text);
+        url: _urlController.text,
+        description: _descriptionController.text);
   }
 
   void _validateAndStore(BuildContext context) {
     if (_formKey.currentState.validate()) {
-      MessagingService.showSnackBarMessage(context, 'Storing secret...');
+      MessagingService.showSnackBarMessage(context, tr('pages.detail.snacks.storing'));
 
       SecretsRepository.storeSecret(this._getSecretFromForm())
           .then((Secret value) => {Navigator.of(context).pop(value)})
@@ -280,7 +265,7 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
                   this._isSubmitting = false;
                 }),
                 MessagingService.showSnackBarMessage(
-                    context, 'Could not store secret at the moment'),
+                    context, tr('pages.detail.snacks.error')),
                 throw error
               });
 

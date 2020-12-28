@@ -21,8 +21,9 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-#  flutter_bloc: ^6.1.1
-  form_validator: ^0.1.5
+  form_validator: ^0.1.7
+  easy_localization: ^2.3.3
+  easy_localization_loader: ^0.0.2
   flutter_bloc: ^6.1.1
   equatable: ^1.2.5
   url_launcher: ^5.7.10
@@ -57,6 +58,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/translations/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

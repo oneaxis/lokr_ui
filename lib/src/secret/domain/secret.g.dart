@@ -12,6 +12,7 @@ Secret _$SecretFromJson(Map<String, dynamic> json) {
     title: json['title'] as String,
     username: json['username'] as String,
     url: json['url'] as String,
+    description: json['description'] as String,
   );
 }
 
@@ -20,4 +21,5 @@ Map<String, dynamic> _$SecretToJson(Secret instance) => <String, dynamic>{
       'title': instance.title,
       'username': instance.username,
       'url': instance.url,
+      'description': instance.description,
     };

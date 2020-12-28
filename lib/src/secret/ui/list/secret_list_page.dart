@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,8 +6,9 @@ import 'package:lokr_ui/src/messaging_service.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_event.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_state.dart';
-import 'package:lokr_ui/src/secret/ui/secret_detail_page.dart';
-import 'package:lokr_ui/src/secret/ui/secret_list_item.dart';
+import 'package:lokr_ui/src/secret/ui/detail/secret_detail_page.dart';
+import 'package:lokr_ui/src/secret/ui/list/secret_list_item.dart';
+import 'package:lokr_ui/src/secret/ui/secret_page_header.dart';
 
 class SecretListPage extends StatelessWidget {
   @override
@@ -25,7 +27,7 @@ class SecretListPage extends StatelessWidget {
               ),
               Expanded(
                 flex: 10,
-                child: Text('My stored secrets'),
+                child: Text(tr('pages.list.title')),
               ),
             ],
           ),
@@ -33,63 +35,37 @@ class SecretListPage extends StatelessWidget {
         body: Padding(
             padding: EdgeInsets.all(8),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyText1,
-                    children: [
-                      TextSpan(
-                        text: 'Copy passwords with (',
-                      ),
-                      WidgetSpan(
-                        child: Icon(Icons.vpn_key, size: 14),
-                      ),
-                      TextSpan(
-                        text: '), usernames with (',
-                      ),
-                      WidgetSpan(
-                        child: Icon(Icons.person, size: 14),
-                      ),
-                      TextSpan(
-                        text: '), open URLs with (',
-                      ),
-                      WidgetSpan(
-                        child: Icon(Icons.link, size: 14),
-                      ),
-                      TextSpan(
-                        text: ') or edit the secret details with (',
-                      ),
-                      WidgetSpan(
-                        child: Icon(Icons.edit, size: 14),
-                      ),
-                      TextSpan(
-                        text: ').',
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: Divider(thickness: 1)),
+                SecretPageHeader(
+                    title: tr('pages.list.body.title'),
+                    description: tr('pages.list.body.description')),
                 Expanded(
                   child: _RefreshableListView(),
                 )
               ],
             )),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SecretDetailPage.blank()))
-                .then((createdSecret) => {
-                      if (createdSecret != null)
-                        MessagingService.showSnackBarMessage(
-                            context, 'Stored secret ${createdSecret.title}')
-                    });
+        floatingActionButton: Builder(
+          builder: (context) {
+            return FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SecretDetailPage.createNew()))
+                    .then((createdSecret) => {
+                          if (createdSecret != null)
+                            MessagingService.showSnackBarMessage(
+                              context,
+                              tr('pages.list.snacks.stored',
+                                  namedArgs: {'title': createdSecret.title}),
+                            ),
+                        });
+              },
+              tooltip: tr('pages.list.buttons.create.tooltip'),
+              child: Icon(Icons.add),
+            );
           },
-          tooltip: 'Create new secret',
-          child: Icon(Icons.add),
         ),
       ),
     );
@@ -119,8 +95,8 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                   padding: EdgeInsets.only(top: 8),
                   child: Column(
                     children: [
-                      Text('Loading stored secrets...',
-                          style: Theme.of(context).textTheme.bodyText1),
+                      Text(tr('pages.list.body.secretList.loading'),
+                          style: Theme.of(context).textTheme.bodyText2),
                       Padding(
                         padding: EdgeInsets.only(top: 16),
                         child: LinearProgressIndicator(),
@@ -131,9 +107,8 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
               return state.secrets.isEmpty
                   ? Padding(
                       padding: EdgeInsets.only(top: 8),
-                      child: Text(
-                          "You don't have any stored secret yet. Create one first!",
-                          style: Theme.of(context).textTheme.bodyText1))
+                      child: Text(tr('pages.list.body.secretList.empty'),
+                          style: Theme.of(context).textTheme.bodyText2))
                   : ListView(
                       shrinkWrap: true,
                       children:
@@ -144,10 +119,8 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                   padding: EdgeInsets.only(top: 8),
                   child: Column(
                     children: [
-                      Text(
-                          'Could not load stored secrets at the moment. '
-                          'Please check your internet connection.',
-                          style: Theme.of(context).textTheme.bodyText1),
+                      Text(tr('pages.list.body.secretList.error'),
+                          style: Theme.of(context).textTheme.bodyText2),
                       Padding(
                           padding: EdgeInsets.only(top: 8),
                           child: ElevatedButton(
@@ -155,7 +128,7 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                               BlocProvider.of<SecretsBloc>(context)
                                   .add(SecretsFetchAll())
                             },
-                            child: Text('Retry'),
+                            child: Text(tr('pages.list.body.secretList.retry')),
                           )),
                     ],
                   ));

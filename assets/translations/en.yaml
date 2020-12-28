@@ -1,0 +1,68 @@
+validation:
+  url:
+    error: The URL {url} is not a valid URL and therefore cannot be launched. Edit the URL of this secret to provide a valid URL!
+app:
+  title: LOKR
+pages:
+  list:
+    snacks:
+      stored: Your secret {title} has succesfully been stored
+    buttons:
+      create:
+        tooltip: Create new secret
+    title: LOKR
+    body:
+      title: Stored secrets
+      description: Find here all your stored secrets. Use the action buttons to copy the password or username to the device clipboard, launch an URL or open up the detail view to edit the secret.
+      secretList:
+        loading: Loading stored secrets...
+        error: Unnable load stored secrets at the moment. Please check your internet connection!
+        retry: Retry
+        empty: You don't have any stored secret yet. Create one first!
+        actions:
+          copy:
+            password: Password copied to clipboard
+            username: Username copied to clipboard
+          launch:
+            url: Opening URL {url}...
+  detail:
+    snacks:
+      storing: Your secret is being stored...
+      error: Your secret could not be stored at the moment. Please check your internet connection.
+    fields:
+      password:
+        label: Enter the secret password...
+      purpose:
+        label: Enter the secret title/purpose...
+      username:
+        label: Enter an optional username...
+      url:
+        label: Enter an optional URL...
+      description:
+        label: Enter an optional description...
+      optional:
+        title: Optional fields
+        description: Expand to add a username, URL or description to your secret.
+    buttons:
+      cancel:
+        label: Cancel
+      save:
+        label: Store secret
+    popDialog:
+      title: Cancel secret editing?
+      description: You are about to cancel editing your secret without saving your changes. On cancel, these will get lost.
+      buttons:
+        back:
+          label: Yes, cancel
+        continue:
+          label: No, continue
+    edit:
+      title: Edit secret
+      body:
+        title: Tips
+        description: Edit your stored secret. Always use strong passwords. To generate a secure password quickly and easily, use the action button of the password generator.
+    new:
+      title: Create secret
+      body:
+        title: Tips
+        description: Create a new secret. Always use strong passwords. To generate a secure password quickly and easily, use the action button of the password generator.
