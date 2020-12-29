@@ -6,70 +6,75 @@ import 'package:lokr_ui/src/secret/domain/secret.dart';
 import 'package:lokr_ui/src/secret/resources/secret_repository.dart';
 
 class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
-  SecretsBloc() : super(SecretsInitial());
+  SecretsBloc() : super(Initial());
 
   @override
   Stream<SecretsState> mapEventToState(SecretsEvent event) async* {
-    if (event is SecretsFetchAll) yield* this._mapFetchAllToState();
-    if (event is SecretsStoreSingle)
-      yield* this._mapStoreSingleWithState(event);
-    if (event is SecretsDeleteSingle)
-      yield* this._mapDeleteSingleWithState(event);
-    if (event is SecretsUpdateSingle)
-      yield* this._mapUpdateSingleWithState(event);
+    if (event is LoadAllFromCache) yield* this._mapLoadAllFromCache();
+    if (event is SaveSingleToCache) yield* this._mapSaveSingleToCache(event);
+    if (event is DeleteSingleFromCache)
+      yield* this._mapDeleteSingleFromCache(event);
+    if (event is UpdateSingleFromCache)
+      yield* this._mapUpdateSingleFromCache(event);
+    if (event is SyncWithAPI)
+      yield* this._mapSyncWithAPI(event);
   }
 
-  Stream<SecretsState> _mapUpdateSingleWithState(
-      SecretsUpdateSingle event) async* {
+  Stream<SecretsState> _mapUpdateSingleFromCache(
+      UpdateSingleFromCache event) async* {
     try {
-      await SecretsRepository.updateSecret(event.secret);
+      await SecretRepository.update(event.secret);
     } catch (e) {
       addError(e, StackTrace.current);
-      yield SecretsDeleteSingleError(this.state.secrets, e);
+      yield DeleteSingleFromCacheError(secrets: this.state.secrets, error: e.toString());
     }
 
-    yield* _mapFetchAllToState();
+    yield* _mapLoadAllFromCache();
   }
 
-  Stream<SecretsState> _mapDeleteSingleWithState(
-      SecretsDeleteSingle event) async* {
+  Stream<SecretsState> _mapDeleteSingleFromCache(
+      DeleteSingleFromCache event) async* {
     try {
-      await SecretsRepository.deleteSecret(event.secret);
+      await SecretRepository.delete(event.secret);
     } catch (e) {
       addError(e, StackTrace.current);
-      yield SecretsDeleteSingleError(this.state.secrets, e);
+      yield DeleteSingleFromCacheError(secrets: this.state.secrets, error: e.toString());
     }
 
-    yield* _mapFetchAllToState();
+    yield* _mapLoadAllFromCache();
   }
 
-  Stream<SecretsState> _mapStoreSingleWithState(
-      SecretsStoreSingle event) async* {
+  Stream<SecretsState> _mapSaveSingleToCache(SaveSingleToCache event) async* {
     try {
-      await SecretsRepository.storeSecret(event.secret);
+      await SecretRepository.save(event.secret);
     } catch (e) {
       addError(e, StackTrace.current);
-      yield SecretsStoreSingleError(this.state.secrets, e);
+      yield SaveSingleToCacheError(secrets: this.state.secrets, error: e.toString());
     }
 
-    yield* _mapFetchAllToState();
+    yield SaveSingleToCacheSuccess(await SecretRepository.findAll());
   }
 
-  Stream<SecretsState> _mapFetchAllToState() async* {
+  Stream<SecretsState> _mapLoadAllFromCache() async* {
     List<Secret> fetchedSecrets;
     try {
-      fetchedSecrets = await SecretsRepository.fetchAllSecrets();
+      fetchedSecrets = await SecretRepository.findAll();
     } catch (e) {
+      yield LoadAllFromCacheError(secrets: this.state.secrets, error: e.toString());
       addError(e, StackTrace.current);
-      yield SecretsFetchAllError(this.state.secrets, e);
     }
 
-    yield SecretsFetchAllSuccess(fetchedSecrets);
+    yield LoadAllFromCacheSuccess(fetchedSecrets);
   }
 
   @override
   void onTransition(Transition<SecretsEvent, SecretsState> transition) {
     print('Transition event $transition');
     super.onTransition(transition);
+  }
+
+  Stream<SecretsState> _mapSyncWithAPI(SyncWithAPI event) async* {
+    //TODO: implement correct behaviour
+    yield* _mapLoadAllFromCache();
   }
 }

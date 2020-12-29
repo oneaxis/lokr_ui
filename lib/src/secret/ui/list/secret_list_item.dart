@@ -107,7 +107,7 @@ class SecretListItem extends StatelessWidget {
   }
 
   void _launchURL(BuildContext context) async {
-    if (false && await canLaunch(this.secret.url)) {
+    if (await canLaunch(this.secret.url)) {
       MessagingService.showSnackBarMessage(
           context,
           tr('pages.list.body.secretList.actions.launch.url',

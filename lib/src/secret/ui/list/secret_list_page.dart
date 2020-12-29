@@ -17,60 +17,44 @@ import 'package:lokr_ui/src/secret/ui/secret_page_header.dart';
 class SecretListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => SecretsBloc(),
-      child: Scaffold(
-        appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Row(
+    return Scaffold(
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Row(
+          children: [
+            Icon(Icons.security),
+            Spacer(
+              flex: 1,
+            ),
+            Expanded(
+              flex: 10,
+              child: Text(tr('pages.list.title')),
+            ),
+          ],
+        ),
+      ),
+      body: Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.security),
-              Spacer(
-                flex: 1,
-              ),
+              SecretPageHeader(
+                  title: tr('pages.list.body.title'),
+                  description: tr('pages.list.body.description')),
               Expanded(
-                flex: 10,
-                child: Text(tr('pages.list.title')),
-              ),
+                child: _RefreshableListView(),
+              )
             ],
-          ),
-        ),
-        body: Padding(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SecretPageHeader(
-                    title: tr('pages.list.body.title'),
-                    description: tr('pages.list.body.description')),
-                Expanded(
-                  child: _RefreshableListView(),
-                )
-              ],
-            )),
-        floatingActionButton: Builder(
-          builder: (context) {
-            return FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SecretDetailPage.createNew()))
-                    .then((createdSecret) => {
-                          if (createdSecret != null)
-                            MessagingService.showSnackBarMessage(
-                              context,
-                              tr('pages.list.snacks.stored',
-                                  namedArgs: {'title': createdSecret.title}),
-                            ),
-                        });
-              },
-              tooltip: tr('pages.list.buttons.create.tooltip'),
-              child: Icon(Icons.add),
-            );
-          },
-        ),
+          )),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return SecretDetailPage.createNew();
+          }));
+        },
+        tooltip: tr('pages.list.buttons.create.tooltip'),
+        child: Icon(Icons.add),
       ),
     );
   }
@@ -105,22 +89,26 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
   }
 
   bool _matchesFilterPattern(Secret secret) {
+    if (secret == null) return false;
+
     return (secret.title
-        .toLowerCase()
-        .contains(this._filterPattern.toLowerCase()) ||
+            .toLowerCase()
+            .contains(this._filterPattern.toLowerCase()) ||
         (secret.description != null &&
-            secret.description.toLowerCase().contains(
-                this._filterPattern.toLowerCase())));
+            secret.description
+                .toLowerCase()
+                .contains(this._filterPattern.toLowerCase())));
   }
 
   @override
   Widget build(BuildContext context) {
     Future<void> _refreshState() async {
-      BlocProvider.of<SecretsBloc>(context).add(SecretsFetchAll());
+      BlocProvider.of<SecretsBloc>(context).add(LoadAllFromCache());
       return;
     }
 
     _refreshState();
+
     return Column(
       children: [
         LOKRUITextFormField(
@@ -129,9 +117,20 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
             controller: this._searchController),
         Expanded(
           child: RefreshIndicator(
-              child: BlocBuilder<SecretsBloc, SecretsState>(
+              child: BlocConsumer<SecretsBloc, SecretsState>(
+                listener: (context, state) {
+                  if (state is SaveSingleToCacheSuccess) {
+                    MessagingService.showSnackBarMessage(
+                      context,
+                      tr(
+                        'pages.list.snacks.stored',
+                        namedArgs: {'title': 'some secret title'},
+                      ),
+                    );
+                  }
+                },
                 builder: (context, state) {
-                  if (state is SecretsInitial) {
+                  if (state is Initial) {
                     return Padding(
                         padding: EdgeInsets.only(top: 8),
                         child: Column(
@@ -144,7 +143,8 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                             )
                           ],
                         ));
-                  } else if (state is SecretsFetchAllSuccess) {
+                  } else if (state is LoadAllFromCacheSuccess ||
+                      state is SaveSingleToCacheSuccess) {
                     final List<SecretListItem> filteredListItems = state.secrets
                         .where(_matchesFilterPattern)
                         .map((e) => SecretListItem(e))
@@ -167,7 +167,8 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                       );
                     }
                   } else {
-                    return Padding(
+                    return SingleChildScrollView(
+                      child: Padding(
                         padding: EdgeInsets.only(top: 8),
                         child: Column(
                           children: [
@@ -178,13 +179,15 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                                 child: ElevatedButton(
                                   onPressed: () => {
                                     BlocProvider.of<SecretsBloc>(context)
-                                        .add(SecretsFetchAll())
+                                        .add(SyncWithAPI())
                                   },
                                   child: Text(
                                       tr('pages.list.body.secretList.retry')),
                                 )),
                           ],
-                        ));
+                        ),
+                      ),
+                    );
                   }
                 },
               ),
@@ -194,5 +197,3 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
     );
   }
 }
-
-

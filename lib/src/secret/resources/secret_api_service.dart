@@ -19,8 +19,6 @@ class SecretAPIService {
       EncryptionWrapper wrapper = EncryptionWrapper.fromJson(decodedResponse);
       return Secret.fromJson(wrapper.content);
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw 'Failed to store secret!';
     }
   }
@@ -37,8 +35,6 @@ class SecretAPIService {
 
       return List<Secret>.from(parsedSecrets);
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw 'Failed to load stored secrets!';
     }
   }
