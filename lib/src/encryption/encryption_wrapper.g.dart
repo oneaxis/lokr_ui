@@ -8,13 +8,13 @@ part of 'encryption_wrapper.dart';
 
 EncryptionWrapper _$EncryptionWrapperFromJson(Map<String, dynamic> json) {
   return EncryptionWrapper(
-    content: json['content'],
+    encryptedContent: json['encryptedContent'] as String,
     id: json['id'] as String,
   );
 }
 
 Map<String, dynamic> _$EncryptionWrapperToJson(EncryptionWrapper instance) =>
     <String, dynamic>{
-      'content': instance.content,
+      'encryptedContent': instance.encryptedContent,
       'id': instance.id,
     };

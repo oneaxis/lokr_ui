@@ -11,7 +11,7 @@ To generate code for JSON serialization, follow the official [guide](https://pub
 
 Then run:
 ```bash
-flutter pub run build_runner build
+flutter pub run build_runner build --delete-conflicting-outputs
 ```
 
 ### Mock

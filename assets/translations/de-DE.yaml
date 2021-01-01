@@ -7,6 +7,8 @@ pages:
   list:
     snacks:
       stored: Dein Schlüssel {title} wurde erfolgreich gespeichert
+      deleted: Dein Schlüssel {title} wurde erfolgreich gelöscht
+      deletionError: Dein Schlüssel kann derzeit nicht gelöscht werden
     buttons:
       create:
         tooltip: Neuen Schlüssel erstellen
@@ -18,6 +20,18 @@ pages:
         label: Gib einen Suchbegriff ein...
         noResult: Es wurde nichts passendes gefunden!
       secretList:
+        item:
+          deletionDialog:
+            title: Schlüssel löschen?
+            description: Du bist dabei, einen Schlüssel zu löschen. Zu deiner Sicherheit wird dieser für immer gelöscht (keine Wiederherstellung möglich). Bist du sicher, dass du dies machen willst?
+            buttons:
+              continue:
+                label: Ja, löschen
+              back:
+                label: Nein, abbrechen
+          options:
+            delete: Löschen
+            edit: Bearbeiten
         loading: Gespeicherte Schlüssel werden geladen...
         error: Gespeicherte Schlüssel können derzeit nicht geladen werden. Bitte überprüfe deine Internetverbindung!
         retry: Erneut versuchen

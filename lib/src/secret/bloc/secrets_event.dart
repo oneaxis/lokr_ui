@@ -18,8 +18,4 @@ class DeleteSingleFromCache extends SecretsEventSingleSecret {
   DeleteSingleFromCache(Secret secret) : super(secret);
 }
 
-class UpdateSingleFromCache extends SecretsEventSingleSecret {
-  UpdateSingleFromCache(Secret secret) : super(secret);
-}
-
 class SyncWithAPI extends SecretsEvent {}

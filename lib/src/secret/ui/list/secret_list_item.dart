@@ -2,7 +2,10 @@ import 'package:clipboard/clipboard.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
+import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
+import 'package:lokr_ui/src/secret/bloc/secrets_event.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
 import 'package:lokr_ui/src/secret/ui/detail/secret_detail_page.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -83,22 +86,7 @@ class SecretListItem extends StatelessWidget {
                           : null),
             ),
             Expanded(
-              child: _ListItemIconButtonView(
-                  icon: Icons.edit,
-                  onPressAction: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SecretDetailPage.editExisting(
-                                secret: this.secret))).then((createdSecret) => {
-                          if (createdSecret != null)
-                            MessagingService.showSnackBarMessage(
-                              context,
-                              tr('pages.list.snacks.stored',
-                                  namedArgs: {'title': createdSecret.title}),
-                            )
-                        });
-                  }),
+              child: _MenuButtonView(this.secret),
             ),
           ],
         ),
@@ -148,4 +136,91 @@ class _ListItemIconButtonView extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(onPressed: this.onPressAction, icon: Icon(this.icon));
   }
+}
+
+class _MenuButtonView extends StatelessWidget {
+  final Secret secret;
+
+  _MenuButtonView(this.secret);
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<_MenuButtonOption>(
+      onSelected: (_MenuButtonOption result) {
+        switch (result) {
+          case _MenuButtonOption.edit:
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            SecretDetailPage.editExisting(secret: this.secret)))
+                .then((createdSecret) => {
+                      if (createdSecret != null)
+                        MessagingService.showSnackBarMessage(
+                          context,
+                          tr('pages.list.snacks.stored',
+                              namedArgs: {'title': createdSecret.title}),
+                        )
+                    });
+            break;
+          case _MenuButtonOption.delete:
+            _showDeletionDialog(context, this.secret);
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) =>
+          <PopupMenuEntry<_MenuButtonOption>>[
+        PopupMenuItem<_MenuButtonOption>(
+          value: _MenuButtonOption.edit,
+          child: Text(tr('pages.list.body.secretList.item.options.edit')),
+        ),
+        PopupMenuItem<_MenuButtonOption>(
+          value: _MenuButtonOption.delete,
+          child: Text(tr('pages.list.body.secretList.item.options.delete')),
+        ),
+      ],
+    );
+  }
+}
+
+enum _MenuButtonOption { delete, edit }
+
+void _showDeletionDialog(BuildContext context, Secret secret) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // return object of type Dialog
+      return AlertDialog(
+        title: Text(
+          tr('pages.list.body.secretList.item.deletionDialog.title'),
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        content: Text(
+          tr('pages.list.body.secretList.item.deletionDialog.description'),
+          style: Theme.of(context).textTheme.bodyText2,
+        ),
+        actions: <Widget>[
+          Row(
+            children: [
+              FlatButton(
+                  child: Text(tr(
+                      'pages.list.body.secretList.item.deletionDialog.buttons.back.label')),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              ElevatedButton(
+                child: Text(tr(
+                    'pages.list.body.secretList.item.deletionDialog.buttons.continue.label')),
+                onPressed: () {
+                  BlocProvider.of<SecretsBloc>(context)
+                      .add(DeleteSingleFromCache(secret));
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
 }

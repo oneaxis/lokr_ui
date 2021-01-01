@@ -8,6 +8,7 @@ part of 'secret.dart';
 
 Secret _$SecretFromJson(Map<String, dynamic> json) {
   return Secret(
+    id: json['id'] as String,
     password: json['password'] as String,
     title: json['title'] as String,
     username: json['username'] as String,
@@ -22,4 +23,5 @@ Map<String, dynamic> _$SecretToJson(Secret instance) => <String, dynamic>{
       'username': instance.username,
       'url': instance.url,
       'description': instance.description,
+      'id': instance.id,
     };

@@ -266,11 +266,12 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
 
   Secret _getSecretFromForm() {
     return Secret(
-        password: _passwordController.text,
-        title: _titleController.text,
-        username: _usernameController.text,
-        url: _urlController.text,
-        description: _descriptionController.text);
+        id: _initialSecret != null ? _initialSecret.id : null,
+        password: _passwordController.text.trim(),
+        title: _titleController.text.trim(),
+        username: _usernameController.text.trim(),
+        url: _urlController.text.trim(),
+        description: _descriptionController.text.trim());
   }
 
   void _validateAndStore(BuildContext context) {

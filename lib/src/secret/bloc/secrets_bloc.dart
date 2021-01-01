@@ -14,22 +14,7 @@ class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
     if (event is SaveSingleToCache) yield* this._mapSaveSingleToCache(event);
     if (event is DeleteSingleFromCache)
       yield* this._mapDeleteSingleFromCache(event);
-    if (event is UpdateSingleFromCache)
-      yield* this._mapUpdateSingleFromCache(event);
-    if (event is SyncWithAPI)
-      yield* this._mapSyncWithAPI(event);
-  }
-
-  Stream<SecretsState> _mapUpdateSingleFromCache(
-      UpdateSingleFromCache event) async* {
-    try {
-      await SecretRepository.update(event.secret);
-    } catch (e) {
-      addError(e, StackTrace.current);
-      yield DeleteSingleFromCacheError(secrets: this.state.secrets, error: e.toString());
-    }
-
-    yield* _mapLoadAllFromCache();
+    if (event is SyncWithAPI) yield* this._mapSyncWithAPI(event);
   }
 
   Stream<SecretsState> _mapDeleteSingleFromCache(
@@ -38,10 +23,11 @@ class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
       await SecretRepository.delete(event.secret);
     } catch (e) {
       addError(e, StackTrace.current);
-      yield DeleteSingleFromCacheError(secrets: this.state.secrets, error: e.toString());
+      yield DeleteSingleFromCacheError(
+          secrets: this.state.secrets, error: e.toString());
     }
 
-    yield* _mapLoadAllFromCache();
+    yield DeleteSingleFromCacheSuccess(subject: event.secret, secrets: await SecretRepository.findAll());
   }
 
   Stream<SecretsState> _mapSaveSingleToCache(SaveSingleToCache event) async* {
@@ -49,10 +35,12 @@ class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
       await SecretRepository.save(event.secret);
     } catch (e) {
       addError(e, StackTrace.current);
-      yield SaveSingleToCacheError(secrets: this.state.secrets, error: e.toString());
+      yield SaveSingleToCacheError(
+          secrets: await SecretRepository.findAll(), error: e.toString());
     }
 
-    yield SaveSingleToCacheSuccess(await SecretRepository.findAll());
+    yield SaveSingleToCacheSuccess(
+        subject: event.secret, secrets: await SecretRepository.findAll());
   }
 
   Stream<SecretsState> _mapLoadAllFromCache() async* {
@@ -60,7 +48,8 @@ class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
     try {
       fetchedSecrets = await SecretRepository.findAll();
     } catch (e) {
-      yield LoadAllFromCacheError(secrets: this.state.secrets, error: e.toString());
+      yield LoadAllFromCacheError(
+          secrets: this.state.secrets, error: e.toString());
       addError(e, StackTrace.current);
     }
 

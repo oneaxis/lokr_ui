@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:lokr_ui/src/encryption_wrapper.dart';
+import 'package:lokr_ui/src/encryption/decryptor.dart';
+import 'package:lokr_ui/src/encryption/encryption_wrapper.dart';
 import 'package:http/http.dart' as http;
 import 'package:lokr_ui/src/secret/application_configuration.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
@@ -17,7 +18,7 @@ class SecretAPIService {
     if (response.statusCode == 201) {
       var decodedResponse = jsonDecode(response.body);
       EncryptionWrapper wrapper = EncryptionWrapper.fromJson(decodedResponse);
-      return Secret.fromJson(wrapper.content);
+      return Secret.fromJson(Decryptor.decrypt(wrapper));
     } else {
       throw 'Failed to store secret!';
     }

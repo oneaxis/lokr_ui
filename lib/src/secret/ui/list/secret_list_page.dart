@@ -113,7 +113,13 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
       children: [
         LOKRUITextFormField(
             label: tr('pages.list.body.search.label'),
-            suffix: Icon(Icons.search),
+            prefix: Icon(Icons.search),
+            suffix: IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: () {
+                _searchController.text = '';
+              },
+            ),
             controller: this._searchController),
         Expanded(
           child: RefreshIndicator(
@@ -124,7 +130,23 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                       context,
                       tr(
                         'pages.list.snacks.stored',
-                        namedArgs: {'title': 'some secret title'},
+                        namedArgs: {'title': '${state.subject.title}'},
+                      ),
+                    );
+                  }
+                  else if (state is DeleteSingleFromCacheSuccess) {
+                    MessagingService.showSnackBarMessage(
+                      context,
+                      tr(
+                        'pages.list.snacks.deleted',
+                        namedArgs: {'title': '${state.subject.title}'},
+                      ),
+                    );
+                  } else if (state is DeleteSingleFromCacheError) {
+                    MessagingService.showSnackBarMessage(
+                      context,
+                      tr(
+                        'pages.list.snacks.deletionError',
                       ),
                     );
                   }
@@ -144,7 +166,7 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                           ],
                         ));
                   } else if (state is LoadAllFromCacheSuccess ||
-                      state is SaveSingleToCacheSuccess) {
+                      state is SecretStateSingleSuccess) {
                     final List<SecretListItem> filteredListItems = state.secrets
                         .where(_matchesFilterPattern)
                         .map((e) => SecretListItem(e))

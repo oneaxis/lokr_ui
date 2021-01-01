@@ -5,10 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_event.dart';
+import 'package:lokr_ui/src/secret/resources/secret_storage_provider.dart';
 import 'package:lokr_ui/src/secret/ui/list/secret_list_page.dart';
+import 'package:flutter/widgets.dart';
 
 Future main() async {
   await DotEnv().load('.env');
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await SecretStorageProvider().init();
+
   runApp(
     EasyLocalization(
         supportedLocales: [const Locale('en', ''), const Locale('de', 'DE')],
