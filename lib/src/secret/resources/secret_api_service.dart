@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:lokr_ui/src/encryption_wrapper.dart';
+import 'package:lokr_ui/src/encryption/decryptor.dart';
+import 'package:lokr_ui/src/encryption/encryption_wrapper.dart';
 import 'package:http/http.dart' as http;
 import 'package:lokr_ui/src/secret/application_configuration.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
@@ -17,10 +18,8 @@ class SecretAPIService {
     if (response.statusCode == 201) {
       var decodedResponse = jsonDecode(response.body);
       EncryptionWrapper wrapper = EncryptionWrapper.fromJson(decodedResponse);
-      return Secret.fromJson(wrapper.content);
+      return Secret.fromJson(await Decryptor.decrypt(wrapper));
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw 'Failed to store secret!';
     }
   }
@@ -37,8 +36,6 @@ class SecretAPIService {
 
       return List<Secret>.from(parsedSecrets);
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw 'Failed to load stored secrets!';
     }
   }

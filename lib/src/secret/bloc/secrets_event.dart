@@ -1,44 +1,27 @@
-import 'package:equatable/equatable.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
 
-abstract class SecretsEvent extends Equatable {
-  const SecretsEvent();
+abstract class SecretsEvent {}
 
-  @override
-  List<Object> get props => [];
+abstract class SecretsEventSingleSecret extends SecretsEvent {
+  final Secret secret;
+
+  SecretsEventSingleSecret(this.secret) : super();
 }
 
-class SecretsFetchAll extends SecretsEvent {}
+class LoadAllFromCache extends SecretsEvent {}
 
-class SecretsDeleteSingle extends SecretsEvent {
-  final Secret _secret;
+class SaveAllToCache extends SecretsEvent {
+  final List<Secret> secrets;
 
-  SecretsDeleteSingle(this._secret);
-
-  Secret get secret => _secret;
-
-  @override
-  List<Object> get props => [this._secret];
+  SaveAllToCache(this.secrets);
 }
 
-class SecretsUpdateSingle extends SecretsEvent {
-  final Secret _secret;
-
-  SecretsUpdateSingle(this._secret);
-
-  Secret get secret => _secret;
-
-  @override
-  List<Object> get props => [this._secret];
+class SaveSingleToCache extends SecretsEventSingleSecret {
+  SaveSingleToCache(Secret secret) : super(secret);
 }
 
-class SecretsStoreSingle extends SecretsEvent {
-  final Secret _secret;
-
-  SecretsStoreSingle(this._secret);
-
-  Secret get secret => _secret;
-
-  @override
-  List<Object> get props => [this._secret];
+class DeleteSingleFromCache extends SecretsEventSingleSecret {
+  DeleteSingleFromCache(Secret secret) : super(secret);
 }
+
+class SyncWithAPI extends SecretsEvent {}

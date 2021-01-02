@@ -7,6 +7,8 @@ pages:
   list:
     snacks:
       stored: Your secret {title} has succesfully been stored
+      deleted: Your secret {title} has succesfully been deleted
+      deletionError: Your secret cannot be deleted at the moment
     buttons:
       create:
         tooltip: Create new secret
@@ -18,6 +20,18 @@ pages:
         label: Enter a search keyword...
         noResult: Nothing found for your search!
       secretList:
+        item:
+          deletionDialog:
+            title: Delete secret?
+            description: You are about to delete a secret. For your safety, it will get deleted forever (no recovery). Are you sure you want to do this?
+            buttons:
+              continue:
+                label: Yes, delete
+              back:
+                label: No, cancel
+          options:
+            delete: Delete
+            edit: Edit
         loading: Loading stored secrets...
         error: Unnable load stored secrets at the moment. Please check your internet connection!
         retry: Retry

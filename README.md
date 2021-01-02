@@ -11,7 +11,7 @@ To generate code for JSON serialization, follow the official [guide](https://pub
 
 Then run:
 ```bash
-flutter pub run build_runner build
+flutter pub run build_runner build --delete-conflicting-outputs
 ```
 
 ### Mock
@@ -23,3 +23,10 @@ docker-compose up
 ### Environments
 To use a specific environment, provide a `.env` at the projects top level. Example `.env` files are 
 located in [environments](./environments) (don't forget to rename the files).
+
+### Troubleshooting
+#### State management
+While using `flutter_bloc`, keep an eye on the following:
+- Don't mix contexts (Provision and consumption need to happen in different, nested contexts). A 
+lookup gets performed. So the consuming context needs to have a parent containing a Bloc instance
+- Make sure you provided the required Bloc instance at the right scope (all context children will inherit them) 

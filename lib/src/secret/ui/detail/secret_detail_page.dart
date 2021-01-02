@@ -1,11 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
+import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
+import 'package:lokr_ui/src/secret/bloc/secrets_event.dart';
+import 'package:lokr_ui/src/secret/bloc/secrets_state.dart';
 import 'package:lokr_ui/src/secret/domain/secret_generator.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/resources/secret_repository.dart';
 import 'package:lokr_ui/src/secret/ui/secret_page_header.dart';
 
 import '../lokrui_text_form_field.dart';
@@ -71,7 +74,9 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
       _descriptionController = TextEditingController();
   final Secret _initialSecret;
   List<TextEditingController> _controllers = [];
-  bool _isPasswordHidden = true, _submitPressed = false, _isSubmitting = false;
+  bool _isPasswordHidden = true,
+      _submitPressed = false,
+      _isSubmitting = false;
 
   _SecretDetailFormState(this._initialSecret);
 
@@ -91,112 +96,130 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
 
   @override
   Widget build(BuildContext context) {
-    return new WillPopScope(
-        onWillPop: () async {
-          this._popOnInitialStateOrShowDialog(context,
-              this._initialSecret.hashCode, this._getSecretFromForm().hashCode);
-          return false;
-        },
-        child: Form(
-            autovalidateMode: this._submitPressed
-                ? AutovalidateMode.onUserInteraction
-                : AutovalidateMode.disabled,
-            key: _formKey,
-            child: Column(
-              children: [
-                LOKRUITextFormField(
-                    label: tr('pages.detail.fields.password.label'),
-                    obscureText: _isPasswordHidden,
-                    autofocus: _passwordController.text.isEmpty,
-                    controller: _passwordController,
-                    maxLength: 255,
-                    keyboardType: TextInputType.visiblePassword,
-                    prefix: Icon(Icons.vpn_key),
-                    suffix: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        // added line
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: _isPasswordHidden
-                                ? Icon(Icons.visibility)
-                                : Icon(Icons.visibility_off),
-                            onPressed: () {
-                              this.togglePasswordVisibility();
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.emoji_symbols),
-                            onPressed: () {
-                              SecretGenerator.generateRandomPasswordStream()
-                                  .listen((value) =>
-                                      _passwordController.text = value);
-                            },
-                          )
-                        ]),
-                    validator: ValidationBuilder()
-                        .minLength(3)
-                        .maxLength(255)
-                        .build()),
-                LOKRUITextFormField(
-                    label: tr('pages.detail.fields.purpose.label'),
-                    autofocus: _titleController.text.isEmpty,
-                    maxLength: 255,
-                    prefix: Icon(Icons.short_text),
-                    controller: _titleController,
-                    validator: ValidationBuilder()
-                        .minLength(3)
-                        .maxLength(255)
-                        .build()),
-                Padding(
-                  padding: EdgeInsets.only(top: 8, bottom: 8),
-                  child: SecretOptionalFieldsExpander(
-                    urlController: this._urlController,
-                    descriptionController: this._descriptionController,
-                    usernameController: this._usernameController,
+    return BlocListener<SecretsBloc, SecretsState>(
+      listener: (context, state) {
+        if (state is SaveSingleToCacheSuccess) {
+          Navigator.of(context).pop();
+        } else if (state is SaveSingleToCacheError) {
+          setState(() {
+            this._isSubmitting = false;
+          });
+          MessagingService.showSnackBarMessage(
+              context, tr('pages.detail.snacks.error'));
+          throw state.error;
+        }
+      },
+      child: WillPopScope(
+          onWillPop: () async {
+            this._popOnInitialStateOrShowDialog(
+                context,
+                this._initialSecret.hashCode,
+                this
+                    ._getSecretFromForm()
+                    .hashCode);
+            return false;
+          },
+          child: Form(
+              autovalidateMode: this._submitPressed
+                  ? AutovalidateMode.onUserInteraction
+                  : AutovalidateMode.disabled,
+              key: _formKey,
+              child: Column(
+                children: [
+                  LOKRUITextFormField(
+                      label: tr('pages.detail.fields.password.label'),
+                      obscureText: _isPasswordHidden,
+                      autofocus: _passwordController.text.isEmpty,
+                      controller: _passwordController,
+                      maxLength: 255,
+                      keyboardType: TextInputType.visiblePassword,
+                      prefix: Icon(Icons.vpn_key),
+                      suffix: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          // added line
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: _isPasswordHidden
+                                  ? Icon(Icons.visibility)
+                                  : Icon(Icons.visibility_off),
+                              onPressed: () {
+                                this.togglePasswordVisibility();
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.emoji_symbols),
+                              onPressed: () {
+                                SecretGenerator.generateRandomPasswordStream()
+                                    .listen((value) =>
+                                _passwordController.text = value);
+                              },
+                            )
+                          ]),
+                      validator: ValidationBuilder()
+                          .minLength(3)
+                          .maxLength(255)
+                          .build()),
+                  LOKRUITextFormField(
+                      label: tr('pages.detail.fields.purpose.label'),
+                      autofocus: _titleController.text.isEmpty,
+                      maxLength: 255,
+                      prefix: Icon(Icons.short_text),
+                      controller: _titleController,
+                      validator: ValidationBuilder()
+                          .minLength(3)
+                          .maxLength(255)
+                          .build()),
+                  Padding(
+                    padding: EdgeInsets.only(top: 8, bottom: 8),
+                    child: SecretOptionalFieldsExpander(
+                      urlController: this._urlController,
+                      descriptionController: this._descriptionController,
+                      usernameController: this._usernameController,
+                    ),
                   ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 8, top: 8),
-                        child: FlatButton(
-                          onPressed: () {
-                            this._popOnInitialStateOrShowDialog(
-                                context,
-                                this._initialSecret.hashCode,
-                                this._getSecretFromForm().hashCode);
-                          },
-                          child: Text(
-                            tr('pages.detail.buttons.cancel.label'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 8, top: 8),
+                          child: FlatButton(
+                            onPressed: () {
+                              this._popOnInitialStateOrShowDialog(
+                                  context,
+                                  this._initialSecret.hashCode,
+                                  this
+                                      ._getSecretFromForm()
+                                      .hashCode);
+                            },
+                            child: Text(
+                              tr('pages.detail.buttons.cancel.label'),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 8, top: 8),
-                        child: ElevatedButton(
-                          onPressed: this._isSubmitting
-                              ? null
-                              : () {
-                                  this._validateAndStore(context);
-                                },
-                          child: Text(
-                            tr('pages.detail.buttons.save.label'),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 8, top: 8),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              this._validateAndStore(context);
+                            },
+                            child: Text(
+                              tr('pages.detail.buttons.save.label'),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            )));
+                    ],
+                  ),
+                ],
+              ))),
+    );
   }
 
-  void _popOnInitialStateOrShowDialog(
-      BuildContext context, int initialState, int newState) {
+  void _popOnInitialStateOrShowDialog(BuildContext context, int initialState,
+      int newState) {
     if (initialState == newState) {
       Navigator.pop(context);
     } else {
@@ -207,18 +230,24 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
           return AlertDialog(
             title: Text(
               tr('pages.detail.popDialog.title'),
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headline6,
             ),
             content: Text(
               tr('pages.detail.popDialog.description'),
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .bodyText2,
             ),
             actions: <Widget>[
               Row(
                 children: [
                   FlatButton(
                       child:
-                          Text(tr('pages.detail.popDialog.buttons.back.label')),
+                      Text(tr('pages.detail.popDialog.buttons.back.label')),
                       onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);
@@ -247,27 +276,21 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
 
   Secret _getSecretFromForm() {
     return Secret(
-        password: _passwordController.text,
-        title: _titleController.text,
-        username: _usernameController.text,
-        url: _urlController.text,
-        description: _descriptionController.text);
+        id: _initialSecret != null ? _initialSecret.id : null,
+        password: _passwordController.text.trim(),
+        title: _titleController.text.trim(),
+        username: _usernameController.text.trim(),
+        url: _urlController.text.trim(),
+        description: _descriptionController.text.trim());
   }
 
   void _validateAndStore(BuildContext context) {
     if (_formKey.currentState.validate()) {
-      MessagingService.showSnackBarMessage(context, tr('pages.detail.snacks.storing'));
+      MessagingService.showSnackBarMessage(
+          context, tr('pages.detail.snacks.storing'));
 
-      SecretsRepository.storeSecret(this._getSecretFromForm())
-          .then((Secret value) => {Navigator.of(context).pop(value)})
-          .catchError((error) => {
-                setState(() {
-                  this._isSubmitting = false;
-                }),
-                MessagingService.showSnackBarMessage(
-                    context, tr('pages.detail.snacks.error')),
-                throw error
-              });
+      Secret secret = this._getSecretFromForm();
+      BlocProvider.of<SecretsBloc>(context).add(SaveSingleToCache(secret));
 
       setState(() {
         this._submitPressed = true;

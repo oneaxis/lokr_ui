@@ -1,20 +1,29 @@
+import 'dart:convert';
+
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/resources/secret_api_service.dart';
+import 'package:lokr_ui/src/secret/resources/secret_storage_provider.dart';
 
-class SecretsRepository {
-  static Future<List<Secret>> fetchAllSecrets() {
-    return SecretAPIService.fetchAllSecrets();
+class SecretRepository {
+  static final SecretStorageProvider _secretStorage = SecretStorageProvider();
+
+  static Future<void> saveAll(List<Secret> secrets) async {
+    for (Secret secret in secrets) {
+      await _secretStorage.insert(secret);
+    }
+    return secrets;
   }
 
-  static Future<Secret> storeSecret(Secret secret) {
-    return SecretAPIService.storeSecret(secret);
+  static Future<List<Secret>> findAll() async {
+    List<Secret> storedSecrets = (await _secretStorage.read()) ?? List.empty();
+
+    return List<Secret>.from(storedSecrets);
   }
 
-  static Future<Secret> updateSecret(Secret secret) {
-    return SecretAPIService.updateSecret(secret);
+  static Future<void> save(Secret secret) async {
+    return _secretStorage.insert(secret);
   }
 
-  static Future<Secret> deleteSecret(Secret secret) {
-    return SecretAPIService.deleteSecret(secret);
+  static Future<void> delete(Secret secret) {
+    return _secretStorage.delete(secret);
   }
 }

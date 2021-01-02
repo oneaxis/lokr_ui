@@ -1,47 +1,81 @@
-import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
 
-abstract class SecretsState extends Equatable {
-  final List<Secret> _secrets;
+abstract class SecretsState {
+  final List<Secret> secrets;
 
-  const SecretsState(this._secrets);
-
-  @override
-  List<Object> get props => [this._secrets];
-
-  List<Secret> get secrets => this._secrets;
+  SecretsState(this.secrets);
 }
 
-class SecretsInitial extends SecretsState {
-  SecretsInitial() : super(List.empty());
+abstract class SecretStateSingleSuccess extends SecretsState {
+  final Secret subject;
+
+  SecretStateSingleSuccess({this.subject, List<Secret> secrets})
+      : super(secrets);
 }
 
-class SecretsErrorState extends SecretsState {
+abstract class SecretsErrorState extends SecretsState {
+  final List<Secret> secrets;
   final String error;
 
-  SecretsErrorState(List<Secret> secrets, this.error) : super(secrets);
+  SecretsErrorState(this.secrets, this.error) : super(secrets);
 }
 
-class SecretsFetchAllSuccess extends SecretsState {
-  SecretsFetchAllSuccess(List<Secret> secrets) : super(secrets);
-}
+abstract class SecretStateSingleError extends SecretsErrorState {
+  final String error;
+  final Secret subject;
 
-class SecretsStoreSingleError extends SecretsErrorState {
-  SecretsStoreSingleError(List<Secret> secrets, String error)
+  SecretStateSingleError({this.subject, List<Secret> secrets, this.error})
       : super(secrets, error);
 }
 
-class SecretsUpdatedSingleError extends SecretsErrorState {
-  SecretsUpdatedSingleError(List<Secret> secrets, String error)
+class Initial extends SecretsState {
+  Initial() : super(List<Secret>.empty());
+}
+
+class LoadAllFromCacheSuccess extends SecretsState {
+  LoadAllFromCacheSuccess(List<Secret> secrets) : super(secrets);
+}
+
+class SaveAllToCacheSuccess extends SecretsState {
+  SaveAllToCacheSuccess(List<Secret> secrets) : super(secrets);
+}
+
+class SaveAllToCacheError extends SecretsErrorState {
+  SaveAllToCacheError({List<Secret> secrets, String error})
       : super(secrets, error);
 }
 
-class SecretsDeleteSingleError extends SecretsErrorState {
-  SecretsDeleteSingleError(List<Secret> secrets, String error)
+class LoadAllFromCacheError extends SecretsErrorState {
+  LoadAllFromCacheError({List<Secret> secrets, String error})
       : super(secrets, error);
 }
 
-class SecretsFetchAllError extends SecretsErrorState {
-  SecretsFetchAllError(List<Secret> secrets, String error)
+class SaveSingleToCacheSuccess extends SecretStateSingleSuccess {
+  SaveSingleToCacheSuccess({Secret subject, List<Secret> secrets})
+      : super(subject: subject, secrets: secrets);
+}
+
+class SaveSingleToCacheError extends SecretsErrorState {
+  SaveSingleToCacheError({List<Secret> secrets, String error})
+      : super(secrets, error);
+}
+
+class DeleteSingleFromCacheSuccess extends SecretStateSingleSuccess {
+  DeleteSingleFromCacheSuccess({Secret subject, List<Secret> secrets})
+      : super(subject: subject, secrets: secrets);
+}
+
+class DeleteSingleFromCacheError extends SecretsErrorState {
+  DeleteSingleFromCacheError({List<Secret> secrets, String error})
+      : super(secrets, error);
+}
+
+class SyncWithAPISuccess extends SecretsState {
+  SyncWithAPISuccess(List<Secret> secrets) : super(secrets);
+}
+
+class SyncWithAPIError extends SecretsErrorState {
+  SyncWithAPIError({List<Secret> secrets, String error})
       : super(secrets, error);
 }
