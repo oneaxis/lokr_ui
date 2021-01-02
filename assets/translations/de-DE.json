@@ -1,0 +1,127 @@
+{
+  "validation": {
+    "url": {
+      "error": "Die URL {url} ist nicht gültig und kann somit nicht geöffnet werden. Bearbeite die URL dieses Schlüssels um eine gültige URL anzugeben!"
+    }
+  },
+  "app": {
+    "title": "LOKR"
+  },
+  "pages": {
+    "list": {
+      "snacks": {
+        "stored": "Dein Schlüssel {title} wurde erfolgreich gespeichert",
+        "deleted": "Dein Schlüssel {title} wurde erfolgreich gelöscht",
+        "deletionError": "Dein Schlüssel kann derzeit nicht gelöscht werden"
+      },
+      "buttons": {
+        "create": {
+          "tooltip": "Neuen Schlüssel erstellen"
+        }
+      },
+      "title": "LOKR",
+      "body": {
+        "title": "Gespeicherte Schlüssel",
+        "description": "Hier siehst Du alle Deine gespeicherten Schlüssel. Verwende die Aktionsschaltflächen, um das Kennwort oder Benutzernamen  in die Zwischenablage deines Geräts zu kopieren, die URL zu öffnen oder die Detailansicht um den Schlüssel zu bearbeiten.",
+        "search": {
+          "label": "Gib einen Suchbegriff ein...",
+          "noResult": "Es wurde nichts passendes gefunden!"
+        },
+        "secretList": {
+          "item": {
+            "deletionDialog": {
+              "title": "Schlüssel löschen?",
+              "description": "Du bist dabei, einen Schlüssel zu löschen. Zu deiner Sicherheit wird dieser für immer gelöscht (keine Wiederherstellung möglich). Bist du sicher, dass du dies machen willst?",
+              "buttons": {
+                "continue": {
+                  "label": "Ja, löschen"
+                },
+                "back": {
+                  "label": "Nein, abbrechen"
+                }
+              }
+            },
+            "options": {
+              "delete": "Löschen",
+              "edit": "Bearbeiten"
+            }
+          },
+          "loading": "Gespeicherte Schlüssel werden geladen...",
+          "error": "Gespeicherte Schlüssel können derzeit nicht geladen werden. Bitte überprüfe deine Internetverbindung!",
+          "retry": "Erneut versuchen",
+          "empty": "Du hast noch keine gespeicherten Schlüssel. Erstelle zunächst einen!",
+          "actions": {
+            "copy": {
+              "password": "Passwort in die Zwischenablage kopiert",
+              "username": "Benutzername in die Zwischenablage kopiert"
+            },
+            "launch": {
+              "url": "Öffne URL {url}..."
+            }
+          }
+        }
+      }
+    },
+    "detail": {
+      "snacks": {
+        "storing": "Dein Schlüssel wird gespeichert...",
+        "error": "Dein Schlüssel kann zurzeit nicht gespeichert werden. Prüfe bitte deine Internetverbindung."
+      },
+      "fields": {
+        "password": {
+          "label": "Gebe das Schlüsselpasswort ein..."
+        },
+        "purpose": {
+          "label": "Gebe den Zweck/Titel des Schlüssels ein..."
+        },
+        "username": {
+          "label": "Gebe einen optionalen Nutzernamen ein..."
+        },
+        "url": {
+          "label": "Gebe eine optionale URL ein..."
+        },
+        "description": {
+          "label": "Gebe eine optionale Beschreibung ein..."
+        },
+        "optional": {
+          "title": "Optionale Felder",
+          "description": "Anzeigen um dein Schlüssel mit einem Nutzernamen, einer URL oder Beschreibung zu erweitern."
+        }
+      },
+      "buttons": {
+        "cancel": {
+          "label": "Abbrechen"
+        },
+        "save": {
+          "label": "Schlüssel speichern"
+        }
+      },
+      "popDialog": {
+        "title": "Schlüsselbearbeitung abbrechen?",
+        "description": "Du bist dabei die Bearbeitung deines Schlüssels abzubrechen ohne deine Änderungen zu speichern. Bei Abbruch gehen diese verloren.",
+        "buttons": {
+          "back": {
+            "label": "Ja, abbrechen"
+          },
+          "continue": {
+            "label": "Nein, weitermachen"
+          }
+        }
+      },
+      "edit": {
+        "title": "Schlüssel bearbeiten",
+        "body": {
+          "title": "Tipps",
+          "description": "Bearbeite deinen gespeicherten Schlüssel. Nutze immer sichere Passwörter. Um schnell und einfach ein sicheres Passwort zu generieren, nutze die Aktionsschaltfläche des Passwortgenerators."
+        }
+      },
+      "new": {
+        "title": "Schlüssel erstellen",
+        "body": {
+          "title": "Tipps",
+          "description": "Erstelle einen neuen Schlüssel. Nutze immer sichere Passwörter. Um schnell und einfach ein sicheres Passwort zu generieren, nutze die Aktionsschaltfläche des Passwortgenerators."
+        }
+      }
+    }
+  }
+}

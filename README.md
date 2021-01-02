@@ -20,6 +20,9 @@ To get life into your application and fill it with mock data, use (see [docker-c
 docker-compose up 
 ```
 
+### Exchange launcher icon
+See https://pub.dev/packages/flutter_launcher_icons
+
 ### Environments
 To use a specific environment, provide a `.env` at the projects top level. Example `.env` files are 
 located in [environments](./environments) (don't forget to rename the files).

@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:easy_localization_loader/easy_localization_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,7 +19,6 @@ Future main() async {
         supportedLocales: [const Locale('en', ''), const Locale('de', 'DE')],
         path: 'assets/translations',
         fallbackLocale: Locale('en', ''),
-        assetLoader: YamlAssetLoader(),
         child: LOKRUI()),
   );
 }
@@ -37,7 +35,7 @@ class LOKRUI extends StatelessWidget {
           locale: context.locale,
           title: tr('app.title'),
           theme: ThemeData(
-            primarySwatch: Colors.blue,
+            primarySwatch: Colors.teal,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           home: SecretListPage()),

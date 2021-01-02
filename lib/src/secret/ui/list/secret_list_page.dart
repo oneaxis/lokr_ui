@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_event.dart';
@@ -23,7 +24,11 @@ class SecretListPage extends StatelessWidget {
         // the App.build method, and use it to set our appbar title.
         title: Row(
           children: [
-            Icon(Icons.security),
+            Expanded(
+              flex: 1,
+              child: SvgPicture.asset('assets/logo/logo_contour.svg',
+                  semanticsLabel: 'LOKR Logo'),
+            ),
             Spacer(
               flex: 1,
             ),
@@ -183,10 +188,14 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                           child: Text(tr('pages.list.body.search.noResult'),
                               style: Theme.of(context).textTheme.bodyText2));
                     } else {
-                      return ListView(
-                        shrinkWrap: true,
-                        children: filteredListItems,
-                      );
+                      return ListView.separated(
+                          itemCount: filteredListItems.length,
+                          shrinkWrap: true,
+                          separatorBuilder: (BuildContext context, int index) =>
+                              Divider(),
+                          itemBuilder: (BuildContext context, int index) {
+                            return filteredListItems[index];
+                          });
                     }
                   } else {
                     return SingleChildScrollView(

@@ -17,79 +17,74 @@ class SecretListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.only(top: 4, bottom: 4),
-      elevation: 2,
-      child: Padding(
-        padding: EdgeInsets.only(top: 8, bottom: 8),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: EdgeInsets.only(left: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _ListItemTextView(
-                      text: secret.title,
-                    ),
-                    if (secret.description != null &&
-                        secret.description.isNotEmpty)
-                      Text(
-                        secret.description,
-                        style: Theme.of(context).textTheme.caption,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                  ],
-                ),
+    return Container(
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: EdgeInsets.only(left: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _ListItemTextView(
+                    text: secret.title,
+                  ),
+                  if (secret.description != null &&
+                      secret.description.isNotEmpty)
+                    Text(
+                      secret.description,
+                      style: Theme.of(context).textTheme.caption,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                ],
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: _ListItemIconButtonView(
-                  icon: Icons.vpn_key,
-                  onPressAction: () {
-                    FlutterClipboard.copy(this.secret.password).then((value) {
-                      // Do what ever you want with the value.
-                      MessagingService.showSnackBarMessage(context,
-                          tr('pages.list.body.secretList.actions.copy.password'));
-                    });
-                  }),
-            ),
-            Expanded(
-              flex: 1,
-              child: _ListItemIconButtonView(
-                  icon: Icons.person,
-                  onPressAction: this.secret.username != null &&
-                          this.secret.username.isNotEmpty
-                      ? () {
-                          FlutterClipboard.copy(this.secret.username)
-                              .then((value) {
-                            // Do what ever you want with the value.
-                            MessagingService.showSnackBarMessage(context,
-                                tr('pages.list.body.secretList.actions.copy.username'));
-                          });
-                        }
-                      : null),
-            ),
-            Expanded(
-              flex: 1,
-              child: _ListItemIconButtonView(
-                  icon: Icons.link,
-                  onPressAction:
-                      this.secret.url != null && this.secret.url.isNotEmpty
-                          ? () {
-                              this._launchURL(context);
-                            }
-                          : null),
-            ),
-            Expanded(
-              child: _MenuButtonView(this.secret),
-            ),
-          ],
-        ),
+          ),
+          Expanded(
+            flex: 1,
+            child: _ListItemIconButtonView(
+                icon: Icons.vpn_key,
+                onPressAction: () {
+                  FlutterClipboard.copy(this.secret.password).then((value) {
+                    // Do what ever you want with the value.
+                    MessagingService.showSnackBarMessage(context,
+                        tr('pages.list.body.secretList.actions.copy.password'));
+                  });
+                }),
+          ),
+          Expanded(
+            flex: 1,
+            child: _ListItemIconButtonView(
+                icon: Icons.person,
+                onPressAction: this.secret.username != null &&
+                        this.secret.username.isNotEmpty
+                    ? () {
+                        FlutterClipboard.copy(this.secret.username)
+                            .then((value) {
+                          // Do what ever you want with the value.
+                          MessagingService.showSnackBarMessage(context,
+                              tr('pages.list.body.secretList.actions.copy.username'));
+                        });
+                      }
+                    : null),
+          ),
+          Expanded(
+            flex: 1,
+            child: _ListItemIconButtonView(
+                icon: Icons.link,
+                onPressAction:
+                    this.secret.url != null && this.secret.url.isNotEmpty
+                        ? () {
+                            this._launchURL(context);
+                          }
+                        : null),
+          ),
+          Expanded(
+            child: _MenuButtonView(this.secret),
+          ),
+        ],
       ),
     );
   }
