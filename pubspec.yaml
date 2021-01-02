@@ -35,6 +35,8 @@ dependencies:
   clipboard: ^0.1.2+8
   http: ^0.12.2
   json_annotation: ^3.1.1
+  encrypt: ^4.0.0
+  password_hash: ^2.0.0
   flutter:
     sdk: flutter
 

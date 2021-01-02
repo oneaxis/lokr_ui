@@ -10,7 +10,8 @@ abstract class SecretsState {
 abstract class SecretStateSingleSuccess extends SecretsState {
   final Secret subject;
 
-  SecretStateSingleSuccess({this.subject, List<Secret> secrets}) : super(secrets);
+  SecretStateSingleSuccess({this.subject, List<Secret> secrets})
+      : super(secrets);
 }
 
 abstract class SecretsErrorState extends SecretsState {
@@ -36,13 +37,23 @@ class LoadAllFromCacheSuccess extends SecretsState {
   LoadAllFromCacheSuccess(List<Secret> secrets) : super(secrets);
 }
 
+class SaveAllToCacheSuccess extends SecretsState {
+  SaveAllToCacheSuccess(List<Secret> secrets) : super(secrets);
+}
+
+class SaveAllToCacheError extends SecretsErrorState {
+  SaveAllToCacheError({List<Secret> secrets, String error})
+      : super(secrets, error);
+}
+
 class LoadAllFromCacheError extends SecretsErrorState {
   LoadAllFromCacheError({List<Secret> secrets, String error})
       : super(secrets, error);
 }
 
 class SaveSingleToCacheSuccess extends SecretStateSingleSuccess {
-  SaveSingleToCacheSuccess({Secret subject, List<Secret> secrets}) : super(subject: subject, secrets: secrets);
+  SaveSingleToCacheSuccess({Secret subject, List<Secret> secrets})
+      : super(subject: subject, secrets: secrets);
 }
 
 class SaveSingleToCacheError extends SecretsErrorState {
@@ -51,7 +62,8 @@ class SaveSingleToCacheError extends SecretsErrorState {
 }
 
 class DeleteSingleFromCacheSuccess extends SecretStateSingleSuccess {
-  DeleteSingleFromCacheSuccess({Secret subject, List<Secret> secrets}) : super(subject: subject, secrets: secrets);
+  DeleteSingleFromCacheSuccess({Secret subject, List<Secret> secrets})
+      : super(subject: subject, secrets: secrets);
 }
 
 class DeleteSingleFromCacheError extends SecretsErrorState {

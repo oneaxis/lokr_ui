@@ -133,8 +133,7 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                         namedArgs: {'title': '${state.subject.title}'},
                       ),
                     );
-                  }
-                  else if (state is DeleteSingleFromCacheSuccess) {
+                  } else if (state is DeleteSingleFromCacheSuccess) {
                     MessagingService.showSnackBarMessage(
                       context,
                       tr(
@@ -166,7 +165,8 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                           ],
                         ));
                   } else if (state is LoadAllFromCacheSuccess ||
-                      state is SecretStateSingleSuccess) {
+                      state is SecretStateSingleSuccess ||
+                      state is SaveAllToCacheSuccess) {
                     final List<SecretListItem> filteredListItems = state.secrets
                         .where(_matchesFilterPattern)
                         .map((e) => SecretListItem(e))

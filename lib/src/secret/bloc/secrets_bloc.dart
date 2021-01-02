@@ -14,6 +14,7 @@ class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
     if (event is SaveSingleToCache) yield* this._mapSaveSingleToCache(event);
     if (event is DeleteSingleFromCache)
       yield* this._mapDeleteSingleFromCache(event);
+    if (event is SaveAllToCache) yield* this._mapSaveAllToCache(event);
     if (event is SyncWithAPI) yield* this._mapSyncWithAPI(event);
   }
 
@@ -27,7 +28,8 @@ class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
           secrets: this.state.secrets, error: e.toString());
     }
 
-    yield DeleteSingleFromCacheSuccess(subject: event.secret, secrets: await SecretRepository.findAll());
+    yield DeleteSingleFromCacheSuccess(
+        subject: event.secret, secrets: await SecretRepository.findAll());
   }
 
   Stream<SecretsState> _mapSaveSingleToCache(SaveSingleToCache event) async* {
@@ -41,6 +43,18 @@ class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
 
     yield SaveSingleToCacheSuccess(
         subject: event.secret, secrets: await SecretRepository.findAll());
+  }
+
+  Stream<SecretsState> _mapSaveAllToCache(SaveAllToCache event) async* {
+    try {
+      await SecretRepository.saveAll(event.secrets);
+    } catch (e) {
+      yield SaveAllToCacheError(
+          secrets: await SecretRepository.findAll(), error: e.toString());
+      addError(e, StackTrace.current);
+    }
+
+    yield SaveAllToCacheSuccess(await SecretRepository.findAll());
   }
 
   Stream<SecretsState> _mapLoadAllFromCache() async* {

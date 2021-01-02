@@ -74,7 +74,9 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
       _descriptionController = TextEditingController();
   final Secret _initialSecret;
   List<TextEditingController> _controllers = [];
-  bool _isPasswordHidden = true, _submitPressed = false, _isSubmitting = false;
+  bool _isPasswordHidden = true,
+      _submitPressed = false,
+      _isSubmitting = false;
 
   _SecretDetailFormState(this._initialSecret);
 
@@ -112,7 +114,9 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
             this._popOnInitialStateOrShowDialog(
                 context,
                 this._initialSecret.hashCode,
-                this._getSecretFromForm().hashCode);
+                this
+                    ._getSecretFromForm()
+                    .hashCode);
             return false;
           },
           child: Form(
@@ -148,7 +152,7 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
                               onPressed: () {
                                 SecretGenerator.generateRandomPasswordStream()
                                     .listen((value) =>
-                                        _passwordController.text = value);
+                                _passwordController.text = value);
                               },
                             )
                           ]),
@@ -184,7 +188,9 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
                               this._popOnInitialStateOrShowDialog(
                                   context,
                                   this._initialSecret.hashCode,
-                                  this._getSecretFromForm().hashCode);
+                                  this
+                                      ._getSecretFromForm()
+                                      .hashCode);
                             },
                             child: Text(
                               tr('pages.detail.buttons.cancel.label'),
@@ -196,11 +202,9 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
                         child: Padding(
                           padding: EdgeInsets.only(right: 8, top: 8),
                           child: ElevatedButton(
-                            onPressed: this._isSubmitting
-                                ? null
-                                : () {
-                                    this._validateAndStore(context);
-                                  },
+                            onPressed: () {
+                              this._validateAndStore(context);
+                            },
                             child: Text(
                               tr('pages.detail.buttons.save.label'),
                             ),
@@ -214,8 +218,8 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
     );
   }
 
-  void _popOnInitialStateOrShowDialog(
-      BuildContext context, int initialState, int newState) {
+  void _popOnInitialStateOrShowDialog(BuildContext context, int initialState,
+      int newState) {
     if (initialState == newState) {
       Navigator.pop(context);
     } else {
@@ -226,18 +230,24 @@ class _SecretDetailFormState extends State<_SecretDetailForm> {
           return AlertDialog(
             title: Text(
               tr('pages.detail.popDialog.title'),
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headline6,
             ),
             content: Text(
               tr('pages.detail.popDialog.description'),
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .bodyText2,
             ),
             actions: <Widget>[
               Row(
                 children: [
                   FlatButton(
                       child:
-                          Text(tr('pages.detail.popDialog.buttons.back.label')),
+                      Text(tr('pages.detail.popDialog.buttons.back.label')),
                       onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);

@@ -10,6 +10,12 @@ abstract class SecretsEventSingleSecret extends SecretsEvent {
 
 class LoadAllFromCache extends SecretsEvent {}
 
+class SaveAllToCache extends SecretsEvent {
+  final List<Secret> secrets;
+
+  SaveAllToCache(this.secrets);
+}
+
 class SaveSingleToCache extends SecretsEventSingleSecret {
   SaveSingleToCache(Secret secret) : super(secret);
 }

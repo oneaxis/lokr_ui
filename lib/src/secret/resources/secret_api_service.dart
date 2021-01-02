@@ -18,7 +18,7 @@ class SecretAPIService {
     if (response.statusCode == 201) {
       var decodedResponse = jsonDecode(response.body);
       EncryptionWrapper wrapper = EncryptionWrapper.fromJson(decodedResponse);
-      return Secret.fromJson(Decryptor.decrypt(wrapper));
+      return Secret.fromJson(await Decryptor.decrypt(wrapper));
     } else {
       throw 'Failed to store secret!';
     }
