@@ -6,6 +6,7 @@ import 'package:lokr_ui/src/secret/domain/secret.dart';
 import 'package:lokr_ui/src/secret/resources/secret_repository.dart';
 
 class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
+  final SecretsRepository repository = SecretsRepository();
   SecretsBloc() : super(Initial());
 
   @override
@@ -21,7 +22,7 @@ class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
   Stream<SecretsState> _mapDeleteSingleFromCache(
       DeleteSingleFromCache event) async* {
     try {
-      await SecretRepository.delete(event.secret);
+      await repository.delete(event.secret);
     } catch (e) {
       addError(e, StackTrace.current);
       yield DeleteSingleFromCacheError(
@@ -29,38 +30,38 @@ class SecretsBloc extends Bloc<SecretsEvent, SecretsState> {
     }
 
     yield DeleteSingleFromCacheSuccess(
-        subject: event.secret, secrets: await SecretRepository.findAll());
+        subject: event.secret, secrets: await repository.findAll());
   }
 
   Stream<SecretsState> _mapSaveSingleToCache(SaveSingleToCache event) async* {
     try {
-      await SecretRepository.save(event.secret);
+      await repository.save(event.secret);
     } catch (e) {
       addError(e, StackTrace.current);
       yield SaveSingleToCacheError(
-          secrets: await SecretRepository.findAll(), error: e.toString());
+          secrets: await repository.findAll(), error: e.toString());
     }
 
     yield SaveSingleToCacheSuccess(
-        subject: event.secret, secrets: await SecretRepository.findAll());
+        subject: event.secret, secrets: await repository.findAll());
   }
 
   Stream<SecretsState> _mapSaveAllToCache(SaveAllToCache event) async* {
     try {
-      await SecretRepository.saveAll(event.secrets);
+      await repository.saveAll(event.secrets);
     } catch (e) {
       yield SaveAllToCacheError(
-          secrets: await SecretRepository.findAll(), error: e.toString());
+          secrets: await repository.findAll(), error: e.toString());
       addError(e, StackTrace.current);
     }
 
-    yield SaveAllToCacheSuccess(await SecretRepository.findAll());
+    yield SaveAllToCacheSuccess(await repository.findAll());
   }
 
   Stream<SecretsState> _mapLoadAllFromCache() async* {
     List<Secret> fetchedSecrets;
     try {
-      fetchedSecrets = await SecretRepository.findAll();
+      fetchedSecrets = await repository.findAll();
     } catch (e) {
       yield LoadAllFromCacheError(
           secrets: this.state.secrets, error: e.toString());

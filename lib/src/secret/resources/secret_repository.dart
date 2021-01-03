@@ -1,29 +1,39 @@
-import 'dart:convert';
-
+import 'package:lokr_ui/src/repository.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/secret/resources/secret_storage_provider.dart';
+import 'package:lokr_ui/src/storage_provider.dart';
 
-class SecretRepository {
-  static final SecretStorageProvider _secretStorage = SecretStorageProvider();
+class SecretsRepository extends Repository<Secret> {
+  final repositoryTable = DatabaseTables.secrets;
 
-  static Future<void> saveAll(List<Secret> secrets) async {
-    for (Secret secret in secrets) {
-      await _secretStorage.insert(secret);
-    }
-    return secrets;
+  @override
+  Future<void> delete(Secret instance) async {
+    await this.storageProvider.delete(
+          instance,
+          repositoryTable,
+        );
   }
 
-  static Future<List<Secret>> findAll() async {
-    List<Secret> storedSecrets = (await _secretStorage.read()) ?? List.empty();
-
-    return List<Secret>.from(storedSecrets);
+  @override
+  Future<Secret> find(Secret instance) async {
+    return Secret.fromJson(
+        (await this.storageProvider.read(instance, repositoryTable)));
   }
 
-  static Future<void> save(Secret secret) async {
-    return _secretStorage.insert(secret);
+  @override
+  Future<List<Secret>> findAll() async {
+    return (await this.storageProvider.readAll(repositoryTable))
+        .map((decryptedInstance) => Secret.fromJson(decryptedInstance))
+        .toList();
   }
 
-  static Future<void> delete(Secret secret) {
-    return _secretStorage.delete(secret);
+  @override
+  Future<void> save(Secret instance) async {
+    await this.storageProvider.insert(instance, repositoryTable);
+  }
+
+  @override
+  Future<void> saveAll(List<Secret> instances) {
+    // TODO: implement saveAll
+    throw UnimplementedError();
   }
 }
