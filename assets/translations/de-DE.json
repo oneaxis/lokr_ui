@@ -8,6 +8,26 @@
     "title": "LOKR"
   },
   "pages": {
+    "login": {
+      "title": "Login",
+      "description": "Logge dich ein um Zugang zu deinen Schlüsseln zu erhalten oder registriere dich wenn du neu hier bist.",
+      "buttons": {
+        "login": {
+          "label": "Einloggen"
+        },
+        "register": {
+          "label": "Registrieren"
+        }
+      },
+      "fields": {
+        "password": {
+          "label": "Gebe dein Masterpasswort ein..."
+        },
+        "username": {
+          "label": "Gebe deinen Benutzernamen ein..."
+        },
+      }
+    },
     "list": {
       "snacks": {
         "stored": "Dein Schlüssel {title} wurde erfolgreich gespeichert",

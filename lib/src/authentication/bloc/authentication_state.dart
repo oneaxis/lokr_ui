@@ -7,6 +7,10 @@ class AuthenticationState {
   AuthenticationState(this.principal);
 }
 
+class Initial extends AuthenticationState {
+  Initial() : super(null);
+}
+
 class AuthenticationErrorState extends AuthenticationState {
   final String error;
 
@@ -19,6 +23,14 @@ class LogInSuccess extends AuthenticationState {
 
 class LogInError extends AuthenticationErrorState {
   LogInError(User principal, String error) : super(principal, error);
+}
+
+class RegistrationSuccess extends AuthenticationState {
+  RegistrationSuccess(User principal) : super(principal);
+}
+
+class RegistrationError extends AuthenticationErrorState {
+  RegistrationError(User principal, String error) : super(principal, error);
 }
 
 class LogOutSuccess extends AuthenticationState {

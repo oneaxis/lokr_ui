@@ -18,13 +18,13 @@ class EncryptionStorageProvider {
     return _singleton;
   }
 
-  Future<void> init() async {
+  Future<void> initialize() async {
     this._database = await openDatabase(
       join(await getDatabasesPath(), databaseFileName),
       onCreate: (db, version) {
         return db.execute(_getCreateTablesSQL());
       },
-      version: 2,
+      version: 4,
     );
 
     print('Database initialized ' + _database.path);
@@ -34,7 +34,7 @@ class EncryptionStorageProvider {
 
   String _getCreateTablesSQL() {
     List<String> createTableSQLs = [
-      'CREATE TABLE ${DatabaseTables.users.name}(id TEXT PRIMARY KEY, username TEXT, password TEXT)',
+      'CREATE TABLE ${DatabaseTables.users.name}(id TEXT PRIMARY KEY, encryptedContent TEXT)',
       'CREATE TABLE ${DatabaseTables.secrets.name}(id TEXT PRIMARY KEY, encryptedContent TEXT)'
     ];
 
@@ -61,9 +61,7 @@ class EncryptionStorageProvider {
       Encryptable encryptable, final DatabaseTables table) async {
     await _database.delete(
       table.name,
-      // Use a `where` clause to delete a specific dog.
       where: 'id = ?',
-      // Pass the Dog's id as a whereArg to prevent SQL injection.
       whereArgs: [encryptable.id],
     );
   }
@@ -71,9 +69,7 @@ class EncryptionStorageProvider {
   Future<Map<String, dynamic>> read(
       final Encryptable encryptable, final DatabaseTables table) async {
     return (await _database.query(table.name,
-            // Use a `where` clause to delete a specific dog.
             where: 'id = ?',
-            // Pass the Dog's id as a whereArg to prevent SQL injection.
             whereArgs: [encryptable.id]))
         .map((queryResult) => EncryptionWrapper.fromJson(queryResult))
         .map((wrapper) => Decryptor.decrypt(wrapper))

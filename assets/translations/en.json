@@ -8,6 +8,26 @@
     "title": "LOKR"
   },
   "pages": {
+    "login": {
+      "title": "Login",
+      "description": "Login to gain access to your secrets or register if you are new here.",
+      "buttons": {
+        "login": {
+          "label": "Login"
+        },
+        "register": {
+          "label": "Register"
+        }
+      },
+      "fields": {
+        "password": {
+          "label": "Enter your master password..."
+        },
+        "username": {
+          "label": "Enter your username..."
+        }
+      }
+    },
     "list": {
       "snacks": {
         "stored": "Your secret {title} has succesfully been stored",

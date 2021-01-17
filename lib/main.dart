@@ -1,8 +1,9 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:lokr_ui/src/authentication/bloc/authentication_bloc.dart';
+import 'package:lokr_ui/src/authentication/ui/login_page.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_event.dart';
 import 'package:lokr_ui/src/secret/ui/list/secret_list_page.dart';
@@ -13,7 +14,7 @@ Future main() async {
   await DotEnv().load('.env');
 
   WidgetsFlutterBinding.ensureInitialized();
-  await EncryptionStorageProvider().init();
+  await EncryptionStorageProvider().initialize();
 
   runApp(
     EasyLocalization(
@@ -28,8 +29,15 @@ class LOKRUI extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SecretsBloc()..add(LoadAllFromCache()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<SecretsBloc>(
+          create: (context) => SecretsBloc()..add(LoadAllFromCache()),
+        ),
+        BlocProvider<AuthenticationBloc>(
+          create: (context) => AuthenticationBloc(),
+        )
+      ],
       child: MaterialApp(
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
@@ -39,7 +47,8 @@ class LOKRUI extends StatelessWidget {
             primarySwatch: Colors.teal,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: SecretListPage()),
+          // home: SecretListPage(),
+          home: LoginPage()),
     );
   }
 }
