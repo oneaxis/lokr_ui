@@ -9,6 +9,7 @@ import 'encryption/encryptor.dart';
 /// Convention to follow: Nothing goes in or out without passing encryption.
 class EncryptionStorageProvider {
   final databaseFileName = 'lokr_database.db';
+  String _encryptionPassword;
   Database _database;
 
   static final EncryptionStorageProvider _singleton =
@@ -18,7 +19,8 @@ class EncryptionStorageProvider {
     return _singleton;
   }
 
-  Future<void> initialize() async {
+  Future<void> initialize(String encryptionPassword) async {
+    this._encryptionPassword = encryptionPassword;
     this._database = await openDatabase(
       join(await getDatabasesPath(), databaseFileName),
       onCreate: (db, version) {
@@ -47,7 +49,7 @@ class EncryptionStorageProvider {
 
   Future<void> insert(
       final Encryptable encryptable, final DatabaseTables table) async {
-    final EncryptionWrapper wrapper = Encryptor.encrypt(encryptable);
+    final EncryptionWrapper wrapper = Encryptor.encrypt(_encryptionPassword, encryptable);
 
     await _database.insert(
       table.name,
@@ -76,14 +78,14 @@ class EncryptionStorageProvider {
     return (await _database
             .query(table.name, where: 'id = ?', whereArgs: [encryptable.id]))
         .map((queryResult) => EncryptionWrapper.fromJson(queryResult))
-        .map((wrapper) => Decryptor.decrypt(wrapper))
+        .map((wrapper) => Decryptor.decrypt(_encryptionPassword, wrapper))
         .first;
   }
 
   Future<List<Map<String, dynamic>>> readAll(final DatabaseTables table) async {
     return (await _database.query(table.name))
         .map((queryResult) => EncryptionWrapper.fromJson(queryResult))
-        .map((wrapper) => Decryptor.decrypt(wrapper))
+        .map((wrapper) => Decryptor.decrypt(_encryptionPassword, wrapper))
         .toList();
   }
 }

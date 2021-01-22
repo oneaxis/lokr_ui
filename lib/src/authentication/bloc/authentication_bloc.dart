@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:lokr_ui/src/authentication/bloc/authentication_event.dart';
 import 'package:lokr_ui/src/authentication/domain/bouncer.dart';
 import 'package:lokr_ui/src/secret/resources/secret_repository.dart';
+import 'package:lokr_ui/src/storage_provider.dart';
 
 import 'authentication_state.dart';
 
@@ -23,13 +24,14 @@ class AuthenticationBloc
     else if (event is LogOut) yield* mapLogOutToState(event);
   }
 
-  Stream<AuthenticationState> mapCheckBounderExistenceToState(CheckBouncerExistence event) async* {
+  Stream<AuthenticationState> mapCheckBounderExistenceToState(
+      CheckBouncerExistence event) async* {
     try {
-      final bouncer = await _secretsRepository.exists(
+      final bouncerExists = await _secretsRepository.exists(
         Bouncer(null),
       );
 
-      yield bouncer != null
+      yield bouncerExists
           ? BouncerFound()
           : throw Exception('Bouncer not found');
     } catch (error) {
@@ -39,6 +41,8 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> mapLogInToState(LogIn event) async* {
     try {
+      await EncryptionStorageProvider().initialize(event.masterPassword);
+
       final bouncer = await _secretsRepository.find(
         Bouncer(event.masterPassword),
       );
@@ -57,6 +61,8 @@ class AuthenticationBloc
       CreateBouncer event) async* {
     try {
       final bouncer = Bouncer(event.masterPassword);
+      await EncryptionStorageProvider().initialize(event.masterPassword);
+
       await _secretsRepository.save(bouncer);
 
       yield LogInSuccess(bouncer);

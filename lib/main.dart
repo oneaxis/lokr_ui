@@ -17,7 +17,6 @@ Future main() async {
   await DotEnv().load('.env');
 
   WidgetsFlutterBinding.ensureInitialized();
-  await EncryptionStorageProvider().initialize();
 
   runApp(
     EasyLocalization(
