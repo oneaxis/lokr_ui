@@ -12,4 +12,6 @@ abstract class Repository<T> {
   Future<void> saveAll(List<T> instances);
 
   Future<void> delete(T instance);
+
+  Future<bool> exists(T instance);
 }

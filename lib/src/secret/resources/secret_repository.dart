@@ -15,13 +15,22 @@ class SecretsRepository extends Repository<Secret> {
 
   @override
   Future<Secret> find(Secret instance) async {
-    return Secret.fromJson(
-        (await this.storageProvider.read(instance, repositoryTable)));
+    final databaseSecret =
+        await this.storageProvider.read(instance, repositoryTable);
+
+    if (databaseSecret == null) throw Exception('No Secret has been found!');
+
+    return Secret.fromJson((databaseSecret));
   }
 
   @override
   Future<List<Secret>> findAll() async {
-    return (await this.storageProvider.readAll(repositoryTable))
+
+    final databaseSecrets = await this.storageProvider.readAll(repositoryTable);
+
+    if (databaseSecrets == null) throw Exception('No Secret has been found!');
+
+    return (databaseSecrets)
         .map((decryptedInstance) => Secret.fromJson(decryptedInstance))
         .toList();
   }
@@ -35,5 +44,10 @@ class SecretsRepository extends Repository<Secret> {
   Future<void> saveAll(List<Secret> instances) {
     // TODO: implement saveAll
     throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> exists(Secret instance) async {
+    await this.storageProvider.exists(instance.id, repositoryTable);
   }
 }

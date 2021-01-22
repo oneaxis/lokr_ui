@@ -24,7 +24,7 @@ class EncryptionStorageProvider {
       onCreate: (db, version) {
         return db.execute(_getCreateTablesSQL());
       },
-      version: 4,
+      version: 5,
     );
 
     print('Database initialized ' + _database.path);
@@ -34,7 +34,6 @@ class EncryptionStorageProvider {
 
   String _getCreateTablesSQL() {
     List<String> createTableSQLs = [
-      'CREATE TABLE ${DatabaseTables.users.name}(id TEXT PRIMARY KEY, encryptedContent TEXT)',
       'CREATE TABLE ${DatabaseTables.secrets.name}(id TEXT PRIMARY KEY, encryptedContent TEXT)'
     ];
 
@@ -66,11 +65,16 @@ class EncryptionStorageProvider {
     );
   }
 
+  Future<bool> exists(final String id, final DatabaseTables table) async {
+    return (await _database
+            .query(table.name, where: 'id = ?', whereArgs: [id])) !=
+        null;
+  }
+
   Future<Map<String, dynamic>> read(
       final Encryptable encryptable, final DatabaseTables table) async {
-    return (await _database.query(table.name,
-            where: 'id = ?',
-            whereArgs: [encryptable.id]))
+    return (await _database
+            .query(table.name, where: 'id = ?', whereArgs: [encryptable.id]))
         .map((queryResult) => EncryptionWrapper.fromJson(queryResult))
         .map((wrapper) => Decryptor.decrypt(wrapper))
         .first;

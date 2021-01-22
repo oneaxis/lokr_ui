@@ -14,17 +14,25 @@
       "buttons": {
         "login": {
           "label": "Login"
-        },
-        "register": {
-          "label": "Register"
         }
       },
       "fields": {
         "password": {
           "label": "Enter your master password..."
-        },
-        "username": {
-          "label": "Enter your username..."
+        }
+      }
+    },
+    "welcome": {
+      "title": "Welcome",
+      "description": "Good to have you here! Let's start creating your first secret database. All you need to do is to enter your super secret master password. This is the only password you will ever need to remember.",
+      "buttons": {
+        "create": {
+          "label": "Create"
+        }
+      },
+      "fields": {
+        "password": {
+          "label": "Enter your master password..."
         }
       }
     },

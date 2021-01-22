@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:lokr_ui/src/authentication/bloc/authentication_event.dart';
-import 'package:lokr_ui/src/authentication/domain/user.dart';
-import 'package:lokr_ui/src/authentication/resources/users_repository.dart';
+import 'package:lokr_ui/src/authentication/domain/bouncer.dart';
+import 'package:lokr_ui/src/secret/resources/secret_repository.dart';
 
 import 'authentication_state.dart';
 
@@ -9,39 +9,59 @@ class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc() : super(Initial());
 
-  final UsersRepository _usersRepository = UsersRepository();
+  final _secretsRepository = SecretsRepository();
 
   @override
   Stream<AuthenticationState> mapEventToState(
       AuthenticationEvent event) async* {
+    if (event is CheckBouncerExistence)
+      yield* mapCheckBounderExistenceToState(event);
     if (event is LogIn)
       yield* mapLogInToState(event);
-    else if (event is Registration)
-      yield* mapRegistrationToState(event);
+    else if (event is CreateBouncer)
+      yield* mapCreateBouncerToState(event);
     else if (event is LogOut) yield* mapLogOutToState(event);
+  }
+
+  Stream<AuthenticationState> mapCheckBounderExistenceToState(CheckBouncerExistence event) async* {
+    try {
+      final bouncer = await _secretsRepository.exists(
+        Bouncer(null),
+      );
+
+      yield bouncer != null
+          ? BouncerFound()
+          : throw Exception('Bouncer not found');
+    } catch (error) {
+      yield BouncerNotFound(error.toString());
+    }
   }
 
   Stream<AuthenticationState> mapLogInToState(LogIn event) async* {
     try {
-      final User user = await _usersRepository.find(event.user);
+      final bouncer = await _secretsRepository.find(
+        Bouncer(event.masterPassword),
+      );
 
-      yield user != null
-          ? LogInSuccess(event.user)
-          : throw Exception('User not found');
+      yield bouncer != null
+          ? LogInSuccess(bouncer)
+          : throw Exception('Bouncer not found');
     } catch (error) {
-      yield LogInError(event.user, error);
+      yield LogInError(error.toString());
     }
   }
 
   Stream<AuthenticationState> mapLogOutToState(LogOut event) {}
 
-  Stream<AuthenticationState> mapRegistrationToState(
-      Registration event) async* {
+  Stream<AuthenticationState> mapCreateBouncerToState(
+      CreateBouncer event) async* {
     try {
-      await _usersRepository.save(event.user);
-      yield RegistrationSuccess(event.user);
+      final bouncer = Bouncer(event.masterPassword);
+      await _secretsRepository.save(bouncer);
+
+      yield LogInSuccess(bouncer);
     } catch (error) {
-      yield RegistrationError(event.user, error);
+      yield CreateBouncerError(error.toString());
     }
   }
 }

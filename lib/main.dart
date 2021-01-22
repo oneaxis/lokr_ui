@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lokr_ui/src/authentication/bloc/authentication_bloc.dart';
+import 'package:lokr_ui/src/authentication/bloc/authentication_event.dart';
+import 'package:lokr_ui/src/authentication/bloc/authentication_state.dart';
 import 'package:lokr_ui/src/authentication/ui/login_page.dart';
+import 'package:lokr_ui/src/authentication/ui/welcome_page.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_event.dart';
-import 'package:lokr_ui/src/secret/ui/list/secret_list_page.dart';
 import 'package:flutter/widgets.dart';
+import 'package:lokr_ui/src/secret/ui/list/secret_list_page.dart';
 import 'package:lokr_ui/src/storage_provider.dart';
 
 Future main() async {
@@ -48,7 +51,22 @@ class LOKRUI extends StatelessWidget {
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           // home: SecretListPage(),
-          home: LoginPage()),
+          home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              builder: (context, state) {
+            if (state is Initial) {
+              BlocProvider.of<AuthenticationBloc>(context)
+                  .add(CheckBouncerExistence());
+              return Center(
+                child: LinearProgressIndicator(),
+              );
+            } else if (state is BouncerFound) {
+              return LoginPage();
+            } else if (state is LogInSuccess) {
+              return SecretListPage();
+            } else {
+              return WelcomePage();
+            }
+          })),
     );
   }
 }

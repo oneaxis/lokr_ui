@@ -1,21 +1,19 @@
-import 'package:flutter/foundation.dart';
-import 'package:lokr_ui/src/authentication/domain/user.dart';
-
 class AuthenticationEvent {
-  final User user;
-
-  AuthenticationEvent(this.user);
+  AuthenticationEvent();
 }
 
-class LogOut extends AuthenticationEvent {
-  LogOut(User user) : super(user);
-}
+class LogOut extends AuthenticationEvent {}
 
-class Registration extends AuthenticationEvent {
-  Registration({@required String username, @required String password})
-      : super(User.create(username: username, password: password));
+class CreateBouncer extends AuthenticationEvent {
+  String masterPassword;
+
+  CreateBouncer(this.masterPassword) : super();
 }
 
 class LogIn extends AuthenticationEvent {
-  LogIn(User user) : super(user);
+  String masterPassword;
+
+  LogIn(this.masterPassword) : super();
 }
+
+class CheckBouncerExistence extends AuthenticationEvent {}

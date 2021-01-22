@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart';
-import 'package:lokr_ui/src/authentication/domain/user.dart';
+import 'package:lokr_ui/src/authentication/domain/bouncer.dart';
 
 class AuthenticationState {
-  final User principal;
+  final Bouncer bouncer;
 
-  AuthenticationState(this.principal);
+  AuthenticationState(this.bouncer);
 }
 
 class Initial extends AuthenticationState {
@@ -14,29 +13,33 @@ class Initial extends AuthenticationState {
 class AuthenticationErrorState extends AuthenticationState {
   final String error;
 
-  AuthenticationErrorState(User principal, this.error) : super(principal);
+  AuthenticationErrorState(Bouncer bouncer, this.error) : super(bouncer);
 }
 
 class LogInSuccess extends AuthenticationState {
-  LogInSuccess(User principal) : super(principal);
+  LogInSuccess(Bouncer bouncer) : super(bouncer);
 }
 
 class LogInError extends AuthenticationErrorState {
-  LogInError(User principal, String error) : super(principal, error);
+  LogInError(String error) : super(null, error);
 }
 
-class RegistrationSuccess extends AuthenticationState {
-  RegistrationSuccess(User principal) : super(principal);
+class BouncerNotFound extends AuthenticationErrorState {
+  BouncerNotFound(String error) : super(null, error);
 }
 
-class RegistrationError extends AuthenticationErrorState {
-  RegistrationError(User principal, String error) : super(principal, error);
+class BouncerFound extends AuthenticationState {
+  BouncerFound() : super(null);
+}
+
+class CreateBouncerError extends AuthenticationErrorState {
+  CreateBouncerError(String error) : super(null, error);
 }
 
 class LogOutSuccess extends AuthenticationState {
-  LogOutSuccess(User principal) : super(principal);
+  LogOutSuccess(Bouncer bouncer) : super(bouncer);
 }
 
 class LogOutError extends AuthenticationErrorState {
-  LogOutError(User principal, String error) : super(principal, error);
+  LogOutError(String error) : super(null, error);
 }

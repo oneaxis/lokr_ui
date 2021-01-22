@@ -10,12 +10,12 @@ import 'package:lokr_ui/src/messaging_service.dart';
 import 'package:lokr_ui/src/secret/ui/lokrui_text_form_field.dart';
 import 'package:lokr_ui/src/secret/ui/secret_page_header.dart';
 
-class LoginPage extends StatefulWidget {
+class WelcomePage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _WelcomePageState createState() => _WelcomePageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _WelcomePageState extends State<WelcomePage> {
   final _passwordController = TextEditingController();
 
   bool _isPasswordHidden = true;
@@ -37,11 +37,11 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SecretPageHeader(
-                title: tr('pages.login.title'),
-                description: tr('pages.login.description'),
+                title: tr('pages.welcome.title'),
+                description: tr('pages.welcome.description'),
               ),
               LOKRUITextFormField(
-                  label: tr('pages.login.fields.password.label'),
+                  label: tr('pages.welcome.fields.password.label'),
                   obscureText: _isPasswordHidden,
                   autofocus: _passwordController.text.isEmpty,
                   controller: _passwordController,
@@ -72,13 +72,13 @@ class _LoginPageState extends State<LoginPage> {
                       child: ElevatedButton(
                         onPressed: () {
                           BlocProvider.of<AuthenticationBloc>(context).add(
-                            LogIn(
+                            CreateBouncer(
                               _passwordController.text.trim(),
                             ),
                           );
                         },
                         child: Text(
-                          tr('pages.login.buttons.login.label'),
+                          tr('pages.welcome.buttons.create.label'),
                         ),
                       ),
                     ),
