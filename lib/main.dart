@@ -2,21 +2,22 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:lokr_ui/src/authentication/bloc/authentication_bloc.dart';
-import 'package:lokr_ui/src/authentication/bloc/authentication_event.dart';
-import 'package:lokr_ui/src/authentication/bloc/authentication_state.dart';
+import 'package:lokr_ui/src/authentication/bloc/bouncer_bloc.dart';
+import 'package:lokr_ui/src/authentication/bloc/bouncer_events.dart';
+import 'package:lokr_ui/src/authentication/bloc/bouncer_states.dart';
 import 'package:lokr_ui/src/authentication/ui/login_page.dart';
 import 'package:lokr_ui/src/authentication/ui/welcome_page.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_bloc.dart';
 import 'package:lokr_ui/src/secret/bloc/secrets_event.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lokr_ui/src/secret/ui/list/secret_list_page.dart';
-import 'package:lokr_ui/src/storage_provider.dart';
+import 'package:lokr_ui/src/encryption_storage_provider.dart';
 
 Future main() async {
   await DotEnv().load('.env');
 
   WidgetsFlutterBinding.ensureInitialized();
+  await EncryptionStorageProvider().initialize();
 
   runApp(
     EasyLocalization(
@@ -50,17 +51,17 @@ class LOKRUI extends StatelessWidget {
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           // home: SecretListPage(),
-          home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          home: BlocBuilder<AuthenticationBloc, BouncerState>(
               builder: (context, state) {
             if (state is Initial) {
               BlocProvider.of<AuthenticationBloc>(context)
-                  .add(CheckBouncerExistence());
+                  .add(GetLastActiveBouncer());
               return Center(
                 child: LinearProgressIndicator(),
               );
-            } else if (state is BouncerFound) {
+            } else if (state is BouncerReady || state is BouncerRejectedMasterPassword) {
               return LoginPage();
-            } else if (state is LogInSuccess) {
+            } else if (state is BouncerAcceptedMasterPassword ) {
               return SecretListPage();
             } else {
               return WelcomePage();

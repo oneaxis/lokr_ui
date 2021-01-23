@@ -1,6 +1,6 @@
 import 'package:lokr_ui/src/repository.dart';
 import 'package:lokr_ui/src/secret/domain/secret.dart';
-import 'package:lokr_ui/src/storage_provider.dart';
+import 'package:lokr_ui/src/encryption_storage_provider.dart';
 
 class SecretsRepository extends Repository<Secret> {
   final repositoryTable = DatabaseTables.secrets;

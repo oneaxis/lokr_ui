@@ -1,4 +1,4 @@
-import 'package:lokr_ui/src/storage_provider.dart';
+import 'package:lokr_ui/src/encryption_storage_provider.dart';
 
 abstract class Repository<T> {
   final EncryptionStorageProvider storageProvider = EncryptionStorageProvider();

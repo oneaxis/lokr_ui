@@ -19,14 +19,17 @@ class EncryptionStorageProvider {
     return _singleton;
   }
 
-  Future<void> initialize(String encryptionPassword) async {
+  Future<void> setEncryptionPassword(String encryptionPassword) {
     this._encryptionPassword = encryptionPassword;
+  }
+
+  Future<void> initialize() async {
     this._database = await openDatabase(
       join(await getDatabasesPath(), databaseFileName),
       onCreate: (db, version) {
         return db.execute(_getCreateTablesSQL());
       },
-      version: 5,
+      version: 12,
     );
 
     print('Database initialized ' + _database.path);
@@ -36,7 +39,8 @@ class EncryptionStorageProvider {
 
   String _getCreateTablesSQL() {
     List<String> createTableSQLs = [
-      'CREATE TABLE ${DatabaseTables.secrets.name}(id TEXT PRIMARY KEY, encryptedContent TEXT)'
+      'CREATE TABLE ${DatabaseTables.bouncers.name}(id TEXT PRIMARY KEY, updatedAt TEXT, createdAt TEXT, encryptedContent TEXT)',
+      'CREATE TABLE ${DatabaseTables.secrets.name}(id TEXT PRIMARY KEY, updatedAt TEXT, createdAt TEXT, encryptedContent TEXT)',
     ];
 
     return createTableSQLs.join('; ');
@@ -49,7 +53,8 @@ class EncryptionStorageProvider {
 
   Future<void> insert(
       final Encryptable encryptable, final DatabaseTables table) async {
-    final EncryptionWrapper wrapper = Encryptor.encrypt(_encryptionPassword, encryptable);
+    final EncryptionWrapper wrapper =
+        Encryptor.encrypt(_encryptionPassword, encryptable);
 
     await _database.insert(
       table.name,
@@ -65,6 +70,18 @@ class EncryptionStorageProvider {
       where: 'id = ?',
       whereArgs: [encryptable.id],
     );
+  }
+
+  Future<List<EncryptionWrapper>> readEncrypted(
+      {final String where,
+      final List whereArgs,
+      String orderBy,
+      final DatabaseTables table}) async {
+    return (await _database.query(table.name,
+                where: where, whereArgs: whereArgs, orderBy: orderBy))
+            .map((queryResult) => EncryptionWrapper.fromJson(queryResult))
+            .toList() ??
+        List.empty();
   }
 
   Future<bool> exists(final String id, final DatabaseTables table) async {
@@ -90,15 +107,15 @@ class EncryptionStorageProvider {
   }
 }
 
-enum DatabaseTables { users, secrets }
+enum DatabaseTables { bouncers, secrets }
 
 extension DatabaseTableNames on DatabaseTables {
   get name {
     switch (this) {
       case DatabaseTables.secrets:
         return 'secrets';
-      case DatabaseTables.users:
-        return 'users';
+      case DatabaseTables.bouncers:
+        return 'bouncers';
     }
   }
 }

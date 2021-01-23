@@ -2,9 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_validator/form_validator.dart';
-import 'package:lokr_ui/src/authentication/bloc/authentication_bloc.dart';
-import 'package:lokr_ui/src/authentication/bloc/authentication_event.dart';
-import 'package:lokr_ui/src/authentication/bloc/authentication_state.dart';
+import 'package:lokr_ui/src/authentication/bloc/bouncer_bloc.dart';
+import 'package:lokr_ui/src/authentication/bloc/bouncer_events.dart';
+import 'package:lokr_ui/src/authentication/bloc/bouncer_states.dart';
 import 'package:lokr_ui/src/authentication/domain/bouncer.dart';
 import 'package:lokr_ui/src/messaging_service.dart';
 import 'package:lokr_ui/src/secret/ui/lokrui_text_form_field.dart';
@@ -29,7 +29,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
+      body: BlocConsumer<AuthenticationBloc, BouncerState>(
           builder: (context, state) {
         return Padding(
           padding: EdgeInsets.only(left: 8, right: 8),
@@ -72,8 +72,9 @@ class _WelcomePageState extends State<WelcomePage> {
                       child: ElevatedButton(
                         onPressed: () {
                           BlocProvider.of<AuthenticationBloc>(context).add(
-                            CreateBouncer(
-                              _passwordController.text.trim(),
+                            HireBouncer(
+                              Bouncer('somebouncernid',
+                                  _passwordController.text.trim()),
                             ),
                           );
                         },
@@ -89,7 +90,7 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
         );
       }, listener: (context, state) {
-        if (state is LogInError)
+        if (state is BouncerRejectedMasterPassword)
           MessagingService.showSnackBarMessage(
               context, 'You provided a wrong password!');
       }),
