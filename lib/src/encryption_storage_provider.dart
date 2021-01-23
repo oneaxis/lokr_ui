@@ -27,7 +27,8 @@ class EncryptionStorageProvider {
     this._database = await openDatabase(
       join(await getDatabasesPath(), databaseFileName),
       onCreate: (db, version) {
-        return db.execute(_getCreateTablesSQL());
+        _getCreateTableStatements()
+            .forEach((statement) => db.execute(statement));
       },
       version: 12,
     );
@@ -37,13 +38,13 @@ class EncryptionStorageProvider {
 
   EncryptionStorageProvider._internal();
 
-  String _getCreateTablesSQL() {
+  List _getCreateTableStatements() {
     List<String> createTableSQLs = [
       'CREATE TABLE ${DatabaseTables.bouncers.name}(id TEXT PRIMARY KEY, updatedAt TEXT, createdAt TEXT, encryptedContent TEXT)',
       'CREATE TABLE ${DatabaseTables.secrets.name}(id TEXT PRIMARY KEY, updatedAt TEXT, createdAt TEXT, encryptedContent TEXT)',
     ];
 
-    return createTableSQLs.join('; ');
+    return createTableSQLs;
   }
 
   Future<void> insertAll(
