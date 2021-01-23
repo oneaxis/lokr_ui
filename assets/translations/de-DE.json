@@ -1,5 +1,8 @@
 {
   "validation": {
+    "bouncerRejectedPassword": {
+      "error": "Das eingegebene Passwort ist falsch! Bitte versuche es erneut."
+    },
     "url": {
       "error": "Die URL {url} ist nicht gültig und kann somit nicht geöffnet werden. Bearbeite die URL dieses Schlüssels um eine gültige URL anzugeben!"
     }
@@ -10,7 +13,7 @@
   "pages": {
     "login": {
       "title": "Login",
-      "description": "Logge dich ein um Zugang zu deinen Schlüsseln zu erhalten oder registriere dich wenn du neu hier bist.",
+      "description": "Logge dich ein um Zugang zu deinem LOKR zu erhalten.",
       "buttons": {
         "login": {
           "label": "Einloggen"
@@ -24,13 +27,16 @@
     },
     "welcome": {
       "title": "Willkommen",
-      "description": "Schön, dass du hier bist! Beginnen wir mit der Erstellung deiner ersten Schlüsseldatenbank. Alles was du tun musst, ist dein super geheimes Master-Passwort einzugeben. Dies ist das einzige Passwort, an das du dich noch erinnern musst.",
+      "description": "Schön, dass du hier bist! Beginnen wir mit der Erstellung deiner ersten Schlüsseldatenbank und der Vergabe eines Namens für deinen LOKR. Alles was du tun musst, ist dein super geheimes Master-Passwort einzugeben. Dies ist das einzige Passwort, an das du dich noch erinnern musst.",
       "buttons": {
         "create": {
           "label": "Erstellen"
         }
       },
       "fields": {
+        "lokrName": {
+          "label": "Gebe den Namen deines geheimen LOKRs ein..."
+        },
         "password": {
           "label": "Gebe dein Masterpasswort ein..."
         }

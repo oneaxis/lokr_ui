@@ -46,7 +46,7 @@ class BouncersRepository extends Repository<Bouncer> {
     throw UnimplementedError();
   }
 
-  Future<Bouncer> getLastActiveEncrypted() async {
+  Future<Bouncer> findLastActiveEncrypted() async {
     List<EncryptionWrapper> activeBouncers = await this
         .storageProvider
         .readEncrypted(

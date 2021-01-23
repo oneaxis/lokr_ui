@@ -28,7 +28,7 @@ class AuthenticationBloc extends Bloc<BouncerEvent, BouncerState> {
       GetLastActiveBouncer event) async* {
     try {
       final lastActiveBouncer =
-          await _bouncersRepository.getLastActiveEncrypted();
+          await _bouncersRepository.findLastActiveEncrypted();
 
       yield BouncerReady(lastActiveBouncer);
     } catch (error) {

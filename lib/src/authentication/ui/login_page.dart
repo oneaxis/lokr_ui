@@ -17,8 +17,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
-  bool _isPasswordHidden = true;
+  bool _isPasswordHidden = true, _submitPressed = false;
 
   @override
   void dispose() {
@@ -33,65 +34,74 @@ class _LoginPageState extends State<LoginPage> {
           builder: (context, state) {
         return Padding(
           padding: EdgeInsets.only(left: 8, right: 8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SecretPageHeader(
-                title: tr('pages.login.title'),
-                description: tr('pages.login.description'),
-              ),
-              LOKRUITextFormField(
-                  label: tr('pages.login.fields.password.label'),
-                  obscureText: _isPasswordHidden,
-                  autofocus: _passwordController.text.isEmpty,
-                  controller: _passwordController,
-                  maxLength: 255,
-                  keyboardType: TextInputType.visiblePassword,
-                  prefix: Icon(Icons.vpn_key),
-                  suffix: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      // added line
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: _isPasswordHidden
-                              ? Icon(Icons.visibility)
-                              : Icon(Icons.visibility_off),
+          child: Form(
+            key: _formKey,
+            autovalidateMode: this._submitPressed
+                ? AutovalidateMode.onUserInteraction
+                : AutovalidateMode.disabled,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SecretPageHeader(
+                  title: tr('pages.login.title'),
+                  description: tr('pages.login.description'),
+                ),
+                LOKRUITextFormField(
+                    label: tr('pages.login.fields.password.label'),
+                    obscureText: _isPasswordHidden,
+                    autofocus: _passwordController.text.isEmpty,
+                    controller: _passwordController,
+                    maxLength: 255,
+                    keyboardType: TextInputType.visiblePassword,
+                    prefix: Icon(Icons.vpn_key),
+                    suffix: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // added line
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: _isPasswordHidden
+                                ? Icon(Icons.visibility)
+                                : Icon(Icons.visibility_off),
+                            onPressed: () {
+                              this.togglePasswordVisibility();
+                            },
+                          ),
+                        ]),
+                    validator: ValidationBuilder()
+                        .minLength(3)
+                        .maxLength(255)
+                        .build()),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 8, top: 8),
+                        child: ElevatedButton(
                           onPressed: () {
-                            this.togglePasswordVisibility();
+                            this._submitPressed = true;
+                            BlocProvider.of<AuthenticationBloc>(context).add(
+                              TellMasterPassword(
+                                _passwordController.text.trim(),
+                              ),
+                            );
                           },
-                        ),
-                      ]),
-                  validator:
-                      ValidationBuilder().minLength(3).maxLength(255).build()),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 8, top: 8),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          BlocProvider.of<AuthenticationBloc>(context).add(
-                            TellMasterPassword(
-                              _passwordController.text.trim(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          tr('pages.login.buttons.login.label'),
+                          child: Text(
+                            tr('pages.login.buttons.login.label'),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       }, listener: (context, state) {
         if (state is BouncerRejectedMasterPassword)
           MessagingService.showSnackBarMessage(
-              context, 'You provided a wrong password!');
+              context, tr('validation.bouncerRejectedPassword.error'));
       }),
     );
   }
