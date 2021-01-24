@@ -27,7 +27,7 @@
     },
     "welcome": {
       "title": "Willkommen",
-      "description": "Schön dich bei uns zu haben! Beginnen wir mit der Erstellung deiners ersten geheimen Schließfachs (LOKR). Wir benötigen lediglich einen Namen für dein Schließfach und ein sicheres Masterpasswort. Vergiss niemals dieses Passwort!",
+      "description": "Schön dich bei uns zu haben! Beginnen wir mit der Erstellung deines ersten geheimen Schließfachs (LOKR). Wir benötigen lediglich einen Namen für dein Schließfach und ein sicheres Masterpasswort. Vergiss niemals dieses Passwort!",
       "buttons": {
         "create": {
           "label": "Erstellen"
