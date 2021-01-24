@@ -8,11 +8,11 @@ import 'package:password_hash/password_hash.dart';
 class Encryptor {
   static EncryptionWrapper encrypt(
       String encryptionPassword, Encryptable encryptable) {
-    var wrapperId = _prepare(encryptable);
-    var wrapperContent =
+    var encryptedContent =
         _encryptContent(encryptionPassword, jsonEncode(encryptable));
 
-    return EncryptionWrapper(encryptedContent: wrapperContent, id: wrapperId);
+    return EncryptionWrapper(
+        encryptedContent: encryptedContent, id: encryptable.id);
   }
 
   static String _encryptContent(
@@ -27,12 +27,5 @@ class Encryptor {
     final encrypter = Encrypter(AES(key));
 
     return encrypter.encrypt(encryptableContent, iv: iv).base64;
-  }
-
-  static String _prepare(Encryptable encryptable) {
-    // Extract id to avoid leaking encrypted content
-    var id = encryptable.id;
-    encryptable.id = null;
-    return id;
   }
 }

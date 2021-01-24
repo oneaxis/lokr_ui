@@ -27,7 +27,7 @@
     },
     "welcome": {
       "title": "Willkommen",
-      "description": "Schön, dass du hier bist! Beginnen wir mit der Erstellung deiner ersten Schlüsseldatenbank und der Vergabe eines Namens für deinen LOKR. Alles was du tun musst, ist dein super geheimes Master-Passwort einzugeben. Dies ist das einzige Passwort, an das du dich noch erinnern musst.",
+      "description": "Schön dich bei uns zu haben! Beginnen wir mit der Erstellung deiners ersten geheimen Schließfachs (LOKR). Wir benötigen lediglich einen Namen für dein Schließfach und ein sicheres Masterpasswort. Vergiss niemals dieses Passwort!",
       "buttons": {
         "create": {
           "label": "Erstellen"
@@ -35,7 +35,7 @@
       },
       "fields": {
         "lokrName": {
-          "label": "Gebe den Namen deines geheimen LOKRs ein..."
+          "label": "Gebe den Namen deines LOKRs ein (bspw. MeinLOKR)..."
         },
         "password": {
           "label": "Gebe dein Masterpasswort ein..."

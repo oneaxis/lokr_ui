@@ -27,7 +27,7 @@
     },
     "welcome": {
       "title": "Welcome",
-      "description": "Good to have you here! Let's start creating your first secret database. All you need to do is to enter your super secret master password and a name to identify your secret LOKR. This is the only password you will ever need to remember.",
+      "description": "Glad to have you here! Let's start creating your first secret locker (LOKR). All we need is a name for your locker and a secure master password. Never forget this password!",
       "buttons": {
         "create": {
           "label": "Create"
@@ -35,7 +35,7 @@
       },
       "fields": {
         "lokrName": {
-          "label": "Enter the name of your secret LOKR..."
+          "label": "Enter the name of your LOKR (e.g. MyLOKR)..."
         },
         "password": {
           "label": "Enter your master password..."

@@ -20,8 +20,6 @@ class AuthenticationBloc extends Bloc<BouncerEvent, BouncerState> {
       yield* mapHireBouncerToState(event);
     else if (event is TellMasterPassword)
       yield* mapTellMasterPasswordToState(event);
-    //   yield* mapCreateBouncerToState(event);
-    // else if (event is LogOut) yield* mapLogOutToState(event);
   }
 
   Stream<BouncerState> mapGetLastActiveBouncerToState(
@@ -64,7 +62,7 @@ class AuthenticationBloc extends Bloc<BouncerEvent, BouncerState> {
 
       await _bouncersRepository.save(bouncer);
 
-      yield BouncerReady(bouncer);
+      yield BouncerAcceptedMasterPassword(bouncer);
     } catch (error) {
       yield CreateBouncerError(error.toString());
     }

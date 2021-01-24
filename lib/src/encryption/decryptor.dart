@@ -7,10 +7,7 @@ import 'package:password_hash/password_hash.dart';
 class Decryptor {
   static Map<String, dynamic> decrypt(
       String encryptionPassword, EncryptionWrapper encryptionWrapper) {
-    dynamic decrypted = _decryptContent(encryptionPassword, encryptionWrapper);
-    decrypted['id'] = encryptionWrapper.id;
-
-    return decrypted;
+    return _decryptContent(encryptionPassword, encryptionWrapper);
   }
 
   static dynamic _decryptContent(

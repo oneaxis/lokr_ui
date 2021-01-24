@@ -57,11 +57,15 @@ class LOKRUI extends StatelessWidget {
               BlocProvider.of<AuthenticationBloc>(context)
                   .add(GetLastActiveBouncer());
               return Center(
-                child: LinearProgressIndicator(),
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: LinearProgressIndicator(),
+                ),
               );
-            } else if (state is BouncerReady || state is BouncerRejectedMasterPassword) {
+            } else if (state is BouncerReady ||
+                state is BouncerRejectedMasterPassword) {
               return LoginPage();
-            } else if (state is BouncerAcceptedMasterPassword ) {
+            } else if (state is BouncerAcceptedMasterPassword) {
               return SecretListPage();
             } else {
               return WelcomePage();
