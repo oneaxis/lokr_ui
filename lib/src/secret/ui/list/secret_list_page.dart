@@ -172,6 +172,7 @@ class _RefreshableListViewState extends State<_RefreshableListView> {
                   } else if (state is LoadAllFromCacheSuccess ||
                       state is SecretStateSingleSuccess ||
                       state is SaveAllToCacheSuccess) {
+
                     final List<SecretListItem> filteredListItems = state.secrets
                         .where(_matchesFilterPattern)
                         .map((e) => SecretListItem(e))

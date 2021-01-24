@@ -1,5 +1,8 @@
 {
   "validation": {
+    "bouncerRejectedPassword": {
+      "error": "Das eingegebene Passwort ist falsch! Bitte versuche es erneut."
+    },
     "url": {
       "error": "Die URL {url} ist nicht gültig und kann somit nicht geöffnet werden. Bearbeite die URL dieses Schlüssels um eine gültige URL anzugeben!"
     }
@@ -8,6 +11,37 @@
     "title": "LOKR"
   },
   "pages": {
+    "login": {
+      "title": "Login",
+      "description": "Logge dich ein um Zugang zu deinem LOKR zu erhalten.",
+      "buttons": {
+        "login": {
+          "label": "Einloggen"
+        }
+      },
+      "fields": {
+        "password": {
+          "label": "Gebe dein Masterpasswort ein..."
+        }
+      }
+    },
+    "welcome": {
+      "title": "Willkommen",
+      "description": "Schön dich bei uns zu haben! Beginnen wir mit der Erstellung deines ersten geheimen Schließfachs (LOKR). Wir benötigen lediglich einen Namen für dein Schließfach und ein sicheres Masterpasswort. Vergiss niemals dieses Passwort!",
+      "buttons": {
+        "create": {
+          "label": "Erstellen"
+        }
+      },
+      "fields": {
+        "lokrName": {
+          "label": "Gebe den Namen deines LOKRs ein (bspw. MeinLOKR)..."
+        },
+        "password": {
+          "label": "Gebe dein Masterpasswort ein..."
+        }
+      }
+    },
     "list": {
       "snacks": {
         "stored": "Dein Schlüssel {title} wurde erfolgreich gespeichert",

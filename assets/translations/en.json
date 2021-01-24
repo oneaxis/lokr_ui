@@ -1,5 +1,8 @@
 {
   "validation": {
+    "bouncerRejectedPassword": {
+      "error": "The provided password is incorrect! Please retry."
+    },
     "url": {
       "error": "The URL {url} is not a valid URL and therefore cannot be launched. Edit the URL of this secret to provide a valid URL!"
     }
@@ -8,6 +11,37 @@
     "title": "LOKR"
   },
   "pages": {
+    "login": {
+      "title": "Login",
+      "description": "Login to gain access to your LOKR.",
+      "buttons": {
+        "login": {
+          "label": "Login"
+        }
+      },
+      "fields": {
+        "password": {
+          "label": "Enter your master password..."
+        }
+      }
+    },
+    "welcome": {
+      "title": "Welcome",
+      "description": "Glad to have you here! Let's start creating your first secret locker (LOKR). All we need is a name for your locker and a secure master password. Never forget this password!",
+      "buttons": {
+        "create": {
+          "label": "Create"
+        }
+      },
+      "fields": {
+        "lokrName": {
+          "label": "Enter the name of your LOKR (e.g. MyLOKR)..."
+        },
+        "password": {
+          "label": "Enter your master password..."
+        }
+      }
+    },
     "list": {
       "snacks": {
         "stored": "Your secret {title} has succesfully been stored",
